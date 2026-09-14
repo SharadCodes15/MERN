@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 function connectDB(){
-    mongoose.connect("mongodb://localhost:27017/food-View")
+    mongoose.connect(proccess.env.MONGODB_URI)
     .then(()=>{
         console.log("mongodb Connected");
     })
