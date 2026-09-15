@@ -1,12 +1,17 @@
-const foodmodel = require("../models/food.model");
 const foodModel = require("../models/food.model");
 const storageService = require("../services/storage.service");
 
 const { v4: uuid } = require("uuid");
 async function createFood(req, res) {
+  if (!req.file) {
+    return res.status(400).json({
+      message: "No video uploaded",
+    });
+  }
+
   const fileUploadResult = await storageService.uploadFile(
-    req.file.buffer,
-    uuid(),
+    req.file,
+    `${uuid()}-${req.file.originalname}`,
   );
 //   console.log(fileUploadResult);
 
@@ -14,7 +19,7 @@ async function createFood(req, res) {
     name: req.body.name,
     description: req.body.description,
     video: fileUploadResult.url,
-    foodPartner: req.foodPartner._id,
+    foodpartner: req.foodpartner._id,
   });
 
   res.status(201).json({
@@ -23,6 +28,16 @@ async function createFood(req, res) {
   })
 }
 
+async function GetFoodsItems(req,res) {
+    const foodItems = await foodModel.find({});
+    res.status(200).json({
+        message:"Food Item fetched Successfully",
+        foodItems:foodItems
+    })
+    
+}
+
 module.exports = {
   createFood,
+  GetFoodsItems
 };

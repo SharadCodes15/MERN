@@ -8,7 +8,7 @@ const imagekit = new ImageKit({
 
 async function uploadFile(file, fileName) {
     const result = await imagekit.upload({
-        file: file, // required
+        file: file.buffer, // required
         fileName: fileName, // required
     })
 
