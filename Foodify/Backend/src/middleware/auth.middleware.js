@@ -6,7 +6,7 @@ async function authFoodPartnerMiddleware(req,res,next) {
 
     if(!token){
         res.status(401).json({
-            message:"Register / Login first"
+            message:"Register / Login first",
         })
         return;
     }
@@ -16,6 +16,7 @@ async function authFoodPartnerMiddleware(req,res,next) {
         const decoded = jwt.verify(token,process.env.JWT_SECRET)
         const foodpartner = await foodpartnerModel.findById(decoded.id)
         req.foodpartner = foodpartner
+        next()
     }catch(err){
         // token is invalid
         return res.status(401).json({
@@ -24,6 +25,10 @@ async function authFoodPartnerMiddleware(req,res,next) {
     }
 
 }
+
+
+
+
 module.exports  = {
     authFoodPartnerMiddleware
 }
