@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+:root {
+  /* Surface & Backgrounds */
+  --bg-canvas: #f8faf9;
+  --bg-surface: #ffffff;
+  --bg-muted: #f0f3f1;
+  --bg-active: #e3e8e5;
+
+  /* Text & Contrast */
+  --text-main: #131715;
+  --text-muted: #626c66;
+  --text-subtle: #8a968f;
+
+  /* Borders & Rules */
+  --border-subtle: #e2e8e4;
+  --border-strong: #131715;
+
+  /* Brand Accents */
+  --primary: #0e3b2e;             /* Deep Forest Green */
+  --primary-hover: #155442;
+  --primary-foreground: #ffffff;
+
+  --partner-primary: #d94826;     /* Terracotta Warm Spice */
+  --partner-hover: #b83a1b;
+  --partner-foreground: #ffffff;
+
+  /* Inputs & Rings */
+  --ring-focus: rgba(14, 59, 46, 0.18);
+  --ring-partner-focus: rgba(217, 72, 38, 0.2);
+
+  /* Elevation */
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px -2px rgba(0, 0, 0, 0.02);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-canvas: #0d100f;
+    --bg-surface: #141816;
+    --bg-muted: #1c221f;
+    --bg-active: #242c28;
+
+    --text-main: #f0f4f1;
+    --text-muted: #9ba7a0;
+    --text-subtle: #67726b;
+
+    --border-subtle: #252e29;
+    --border-strong: #f0f4f1;
+
+    --primary: #34d399;
+    --primary-hover: #4ade80;
+    --primary-foreground: #092119;
+
+    --partner-primary: #f87171;
+    --partner-hover: #fb7185;
+    --partner-foreground: #2b0c05;
+
+    --ring-focus: rgba(52, 211, 153, 0.25);
+    --ring-partner-focus: rgba(248, 113, 113, 0.25);
+
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.3), 0 10px 24px -4px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* @import "./variables.css"; */
+
+/* Base Body Application */
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Surface Binding */
+.auth-surface {
+  background-color: var(--bg-surface);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-subtle);
+}
+
+.auth-input {
+  background-color: var(--bg-canvas);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.2s ease;
+}
+
+.auth-input:focus {
+  outline: none;
+  background-color: var(--bg-surface);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--ring-focus);
+}
+
+.partner-input:focus {
+  border-color: var(--partner-primary);
+  box-shadow: 0 0 0 3px var(--ring-partner-focus);
+}
+
+/* Buttons with tactile haptic-feel transitions */
+.btn-user {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  transition: background-color 0.2s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-user:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-user:active {
+  transform: scale(0.985);
+}
+
+.btn-partner {
+  background-color: var(--partner-primary);
+  color: var(--partner-foreground);
+  transition: background-color 0.2s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-partner:hover {
+  background-color: var(--partner-hover);
+}
+
+.btn-partner:active {
+  transform: scale(0.985);
+}
+
+/* Page Mount Fade-in Transitions */
+@keyframes editorialFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: editorialFadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-1 { animation-delay: 60ms; }
+.stagger-2 { animation-delay: 120ms; }
+.stagger-3 { animation-delay: 180ms; }
+
+/* Subtle Architectural Grid Background for Visual Balance */
+.architectural-pattern {
+  background-image: linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 65% 55% at 50% 50%, #000 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 50%, #000 70%, transparent 100%);
+  opacity: 0.45;
+}
