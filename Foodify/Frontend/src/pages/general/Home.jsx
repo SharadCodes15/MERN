@@ -74,13 +74,13 @@ export default function Home() {
             ) : (
               <>
                 <Link
-                  to="/partner/login"
+                  to="/food-partner/login"
                   className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] px-3 py-2 rounded-lg transition-colors"
                 >
                   Merchant Desk
                 </Link>
                 <Link
-                  to="/partner/register"
+                  to="/food-partner/register"
                   className="btn-partner text-xs font-medium uppercase tracking-wider px-3.5 py-2 rounded-lg"
                 >
                   Apply Kitchen
