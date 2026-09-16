@@ -106,7 +106,10 @@ async function registerFoodPartner(req,res) {
         foodpartner:{
             _id:foodpartner._id,
             email:foodpartner.email,
-            name:foodpartner.name
+            name:foodpartner.name,
+            contactName:foodpartner.contactName,
+            phone:foodpartner.phone,
+            address:foodpartner.address
         }
     }) 
 }
