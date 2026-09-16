@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
 import axios from "axios";
-
+import {useNavigate} from "react-router-dom";
 const initialFormState = {
   firstName: "",
   lastName: "",
@@ -11,6 +11,7 @@ const initialFormState = {
 };
 
 export default function UserRegister() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState(initialFormState);
 
   const handleChange = (e) => {
@@ -32,8 +33,13 @@ export default function UserRegister() {
     };
 
     try {
-      await axios.post("http://localhost:3000/api/auth/user/register", payload);
-    } catch (err) {
+      await axios.post("http://localhost:3000/api/auth/user/register", 
+                  payload,
+                {
+                  withCredentials: true,
+                });
+      navigate("/");
+     } catch (err) {
       console.error(err);
     } finally {
       // Resets input fields
