@@ -1,7 +1,49 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
+import axios from "axios";
+
+const initialFormState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+};
 
 export default function UserRegister() {
+  const [formData, setFormData] = useState(initialFormState);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Combines firstName and lastName cleanly without extra spaces
+    const payload = {
+      fullname: `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim(),
+      email: formData.email,
+      password: formData.password,
+    };
+
+    try {
+      await axios.post("http://localhost:3000/api/auth/user/register", payload);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      // Resets input fields
+      setFormData(initialFormState);
+    }
+  };
+
+
+
+
   return (
     <AuthLayout
       badgeText="Personal Member"
@@ -18,7 +60,7 @@ export default function UserRegister() {
           </p>
         </div>
 
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold tracking-wide uppercase text-[var(--text-muted)]">
@@ -26,8 +68,12 @@ export default function UserRegister() {
               </label>
               <input
                 type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
                 placeholder="Elena"
                 className="auth-input w-full px-3.5 py-2.5 rounded-lg text-sm"
+                required
               />
             </div>
             <div className="space-y-1.5">
@@ -36,8 +82,12 @@ export default function UserRegister() {
               </label>
               <input
                 type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
                 placeholder="Rostova"
                 className="auth-input w-full px-3.5 py-2.5 rounded-lg text-sm"
+                required
               />
             </div>
           </div>
@@ -48,8 +98,12 @@ export default function UserRegister() {
             </label>
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="elena@rostova.design"
               className="auth-input w-full px-3.5 py-2.5 rounded-lg text-sm"
+              required
             />
           </div>
 
@@ -59,8 +113,12 @@ export default function UserRegister() {
             </label>
             <input
               type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="At least 8 characters"
               className="auth-input w-full px-3.5 py-2.5 rounded-lg text-sm"
+              required
             />
           </div>
 
