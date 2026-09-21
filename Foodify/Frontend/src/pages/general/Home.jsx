@@ -1,25 +1,7 @@
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-
-const videos = [
-  {
-    id: 1,
-    videoUrl:
-      "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-    description:
-      "Fresh handmade sourdough baked this morning with locally sourced ingredients.",
-    storeName: "Atelier Bakery",
-    storeId: "123",
-  },
-  {
-    id: 2,
-    videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
-    description:
-      "Authentic Maharashtrian thali prepared fresh today in our neighborhood kitchen.",
-    storeName: "Aai's Kitchen",
-    storeId: "456",
-  },
-];
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 function VideoCard({ video, isActive, videoRef }) {
   const [status, setStatus] = useState("loading");
@@ -47,15 +29,14 @@ function VideoCard({ video, isActive, videoRef }) {
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
           status === "loaded" ? "opacity-100" : "opacity-0"
         }`}
-        src={video.videoUrl}
+        src={video.video}
         muted
         loop
         playsInline
-        autoPlay={isActive}
         preload={isActive ? "auto" : "metadata"}
         onLoadedData={() => setStatus("loaded")}
         onError={() => setStatus("error")}
-        aria-label={`${video.storeName} food video`}
+        aria-label={`${video.name} food video`}
       />
 
       {status === "loading" && (
@@ -83,13 +64,13 @@ function VideoCard({ video, isActive, videoRef }) {
       <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:px-8 sm:pb-10 lg:px-12">
         <div className="mx-auto max-w-3xl">
           <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-white/70">
-            {video.storeName}
+            {video.name}
           </p>
           <p className="line-clamp-2 max-w-xl text-sm leading-6 text-white sm:text-base">
             {video.description}
           </p>
           <Link
-            to={`/store/${video.storeId}`}
+            to={`/food-partner/${video.foodpartner}`}
             className="pointer-events-auto mt-4 inline-flex min-h-11 items-center justify-center rounded-lg border border-white/35 bg-white/90 px-6 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--primary)] shadow-lg backdrop-blur-md transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             Visit Store
@@ -101,23 +82,52 @@ function VideoCard({ video, isActive, videoRef }) {
 }
 
 export default function Home() {
-  const [activeVideo, setActiveVideo] = useState(0);
-  const [viewMode, setViewMode] = useState("full");
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [videos, setVideos] = useState([]);
+  const [activeVideo, setActiveVideo] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
   const feedRef = useRef(null);
   const videoRefs = useRef([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 639px)");
-    const updateDeviceMode = () => setIsMobileDevice(mediaQuery.matches);
+    axios
+      .get("http://localhost:3000/api/food", { withCredentials: true })
+      .then((response) => {
+        setVideos(response.data.foodItems);
+        setIsAuthenticated(true);
+      })
+      .catch((error) => {
+        if (error.response?.status === 401) {
+          navigate("/user/login", { replace: true });
+          return;
+        }
 
-    updateDeviceMode();
-    mediaQuery.addEventListener("change", updateDeviceMode);
+        console.error("Failed to fetch food items:", error);
+      });
+  }, [navigate]);
 
-    return () => mediaQuery.removeEventListener("change", updateDeviceMode);
-  }, []);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return undefined;
+    }
 
-  const isMobileView = isMobileDevice || viewMode === "mobile";
+    const fadeTimer = window.setTimeout(() => setShowNavbar(false), 1800);
+    return () => window.clearTimeout(fadeTimer);
+  }, [isAuthenticated]);
+
+  const handleLogout = async () => {
+    try {
+      await axios.get("http://localhost:3000/api/auth/user/logout", {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    } finally {
+      setIsAuthenticated(false);
+      navigate("/user/login", { replace: true });
+    }
+  };
 
   useEffect(() => {
     const feed = feedRef.current;
@@ -146,7 +156,7 @@ export default function Home() {
     cards.forEach((card) => observer.observe(card));
 
     return () => observer.disconnect();
-  }, []);
+  }, [videos.length]);
 
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
@@ -165,71 +175,16 @@ export default function Home() {
   return (
     <div className="relative h-[100dvh] overflow-hidden bg-[var(--bg-canvas)] p-2 font-sans selection:bg-white selection:text-[var(--primary)] sm:p-4">
       <div className="relative h-full overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-black shadow-[var(--shadow-subtle)]">
-        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 border-b border-white/15 bg-black/20 text-white backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-          <Link to="/" className="pointer-events-auto flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--primary)] ring-2 ring-white/50" />
-            <span className="font-serif text-base font-medium tracking-tight sm:text-lg">
-              Kitchen Atelier
-            </span>
-          </Link>
-
-          <div className="pointer-events-auto flex items-center gap-1 sm:gap-3">
-            <Link
-              to="/user/login"
-              className="rounded-lg px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.14em] text-white/75 transition-colors hover:text-white sm:px-3 sm:text-xs"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/user/register"
-              className="rounded-lg border border-white/30 bg-white/90 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--primary)] shadow-sm transition-colors hover:bg-white sm:px-3.5 sm:text-xs"
-            >
-              Join Us
-            </Link>
-          </div>
-        </div>
-        </header>
+        {isAuthenticated && (
+          <Navbar showNavbar={showNavbar} onLogout={handleLogout} />
+        )}
 
         <main
           ref={feedRef}
-          className={`reels-feed relative overflow-y-auto overscroll-y-contain ${
-            isMobileView
-              ? isMobileDevice
-                ? "reels-feed--full"
-                : "reels-feed--mobile"
-              : "reels-feed--full"
-          }`}
+          className="reels-feed reels-feed--mobile relative overflow-y-auto overscroll-y-contain"
         >
-          <div className="absolute right-4 top-20 z-20 hidden items-center rounded-lg border border-white/20 bg-black/25 p-0.5 text-[10px] backdrop-blur-md sm:flex">
-            <button
-              type="button"
-              aria-pressed={viewMode === "full"}
-              onClick={() => setViewMode("full")}
-              className={`rounded-md px-2.5 py-1.5 font-medium uppercase tracking-[0.12em] transition-colors ${
-                viewMode === "full"
-                  ? "bg-white/90 text-[var(--primary)]"
-                  : "text-white/65 hover:text-white"
-              }`}
-            >
-              Full Screen
-            </button>
-            <button
-              type="button"
-              aria-pressed={viewMode === "mobile"}
-              onClick={() => setViewMode("mobile")}
-              className={`rounded-md px-2.5 py-1.5 font-medium uppercase tracking-[0.12em] transition-colors ${
-                viewMode === "mobile"
-                  ? "bg-white/90 text-[var(--primary)]"
-                  : "text-white/65 hover:text-white"
-              }`}
-            >
-              Mobile View
-            </button>
-          </div>
-
           {videos.map((video, index) => (
-            <div key={video.id} className="h-full" data-index={index} data-video-card>
+            <div key={video._id} className="h-full" data-index={index} data-video-card>
               <VideoCard
                 video={video}
                 isActive={activeVideo === index}

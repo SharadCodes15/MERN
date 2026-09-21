@@ -32,7 +32,7 @@ export default function UserLogin() {
       await axios.post("http://localhost:3000/api/auth/user/login", payload, {
         withCredentials: true,
       });
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       console.error(err);
     } finally {

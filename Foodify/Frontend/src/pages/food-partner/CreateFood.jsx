@@ -59,7 +59,7 @@ export default function CreateFood() {
     data.append("video", videoFile);
 
     try {
-      await axios.post("http://localhost:3000/api/food/create", data, {
+      await axios.post("http://localhost:3000/api/food/", data, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -76,13 +76,13 @@ export default function CreateFood() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col font-sans selection:bg-neutral-900 selection:text-white dark:selection:bg-neutral-100 dark:selection:text-black">
+    <div className="relative flex h-[100dvh] flex-col overflow-hidden font-sans selection:bg-neutral-900 selection:text-white dark:selection:bg-neutral-100 dark:selection:text-black">
       {/* Background Architectural Grid Pattern */}
       <div className="architectural-pattern absolute inset-0 pointer-events-none" />
 
       {/* Top Bar */}
       <header className="relative z-10 w-full border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/85 backdrop-blur-md">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[var(--partner-primary)]" />
             <span className="font-serif text-lg font-medium tracking-tight text-[var(--text-main)]">
@@ -103,9 +103,9 @@ export default function CreateFood() {
       </header>
 
       {/* Form Container */}
-      <main className="relative z-10 flex-1 max-w-2xl w-full mx-auto p-4 sm:p-6 lg:py-12">
-        <div className="auth-surface rounded-2xl border p-6 sm:p-10 animate-fade-up">
-          <div className="mb-8">
+      <main className="relative z-10 flex min-h-0 w-full max-w-2xl flex-1 items-start overflow-y-auto mx-auto p-3 sm:p-5">
+        <div className="auth-surface w-full overflow-hidden rounded-2xl border p-4 sm:p-6 animate-fade-up">
+          <div className="mb-4">
             <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-main)]">
               Publish New Dish
             </h1>
@@ -114,7 +114,7 @@ export default function CreateFood() {
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-3" onSubmit={handleSubmit}>
             {/* Dish Name */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold tracking-wide uppercase text-[var(--text-muted)]">
@@ -138,7 +138,7 @@ export default function CreateFood() {
               </label>
               <textarea
                 name="description"
-                rows={4}
+                rows={2}
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Describe key ingredients, allergen profile, flavor characteristics, or preparation methods..."
@@ -154,7 +154,7 @@ export default function CreateFood() {
               </label>
 
               {!videoPreview ? (
-                <label className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-[var(--border-subtle)] rounded-xl cursor-pointer hover:bg-[var(--bg-canvas)] transition-colors">
+                <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-[var(--border-subtle)] p-4 cursor-pointer hover:bg-[var(--bg-canvas)] transition-colors">
                   <div className="flex flex-col items-center justify-center text-center">
                     <svg
                       className="w-8 h-8 mb-2 text-[var(--text-subtle)]"
@@ -189,7 +189,7 @@ export default function CreateFood() {
                   <video
                     src={videoPreview}
                     controls
-                    className="w-full max-h-64 object-cover rounded-xl"
+                    className="w-full max-h-36 object-cover rounded-xl"
                   />
                   <button
                     type="button"
@@ -203,7 +203,7 @@ export default function CreateFood() {
             </div>
 
             {/* Submit Action */}
-            <div className="pt-2">
+            <div className="pt-1">
               <button
                 type="submit"
                 disabled={isSubmitting}

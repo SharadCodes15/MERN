@@ -38,7 +38,7 @@ export default function UserRegister() {
                 {
                   withCredentials: true,
                 });
-      navigate("/");
+      navigate("/home");
      } catch (err) {
       console.error(err);
     } finally {
