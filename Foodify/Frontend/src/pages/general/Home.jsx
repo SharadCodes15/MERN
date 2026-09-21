@@ -39,7 +39,9 @@ function VideoCard({ video, isActive, videoRef }) {
   }, [isActive, status, videoRef]);
 
   return (
-    <article className="relative h-[100dvh] w-full snap-start snap-always overflow-hidden bg-[var(--bg-canvas)]">
+    <article
+      className="relative h-full w-full snap-start snap-always overflow-hidden bg-[var(--bg-canvas)]"
+    >
       <video
         ref={videoRef}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
@@ -100,8 +102,22 @@ function VideoCard({ video, isActive, videoRef }) {
 
 export default function Home() {
   const [activeVideo, setActiveVideo] = useState(0);
+  const [viewMode, setViewMode] = useState("full");
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
   const feedRef = useRef(null);
   const videoRefs = useRef([]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
+    const updateDeviceMode = () => setIsMobileDevice(mediaQuery.matches);
+
+    updateDeviceMode();
+    mediaQuery.addEventListener("change", updateDeviceMode);
+
+    return () => mediaQuery.removeEventListener("change", updateDeviceMode);
+  }, []);
+
+  const isMobileView = isMobileDevice || viewMode === "mobile";
 
   useEffect(() => {
     const feed = feedRef.current;
@@ -147,8 +163,9 @@ export default function Home() {
   }, [activeVideo]);
 
   return (
-    <div className="relative h-[100dvh] overflow-hidden font-sans selection:bg-white selection:text-[var(--primary)]">
-      <header className="pointer-events-none absolute inset-x-0 top-0 z-20 border-b border-white/15 bg-black/20 text-white backdrop-blur-md">
+    <div className="relative h-[100dvh] overflow-hidden bg-[var(--bg-canvas)] p-2 font-sans selection:bg-white selection:text-[var(--primary)] sm:p-4">
+      <div className="relative h-full overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-black shadow-[var(--shadow-subtle)]">
+        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 border-b border-white/15 bg-black/20 text-white backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link to="/" className="pointer-events-auto flex items-center gap-2.5">
             <span className="h-2.5 w-2.5 rounded-full bg-[var(--primary)] ring-2 ring-white/50" />
@@ -172,21 +189,58 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </header>
+        </header>
 
-      <main ref={feedRef} className="reels-feed h-[100dvh] w-full overflow-y-auto overscroll-y-contain">
-        {videos.map((video, index) => (
-          <div key={video.id} data-index={index} data-video-card>
-            <VideoCard
-              video={video}
-              isActive={activeVideo === index}
-              videoRef={(element) => {
-                videoRefs.current[index] = element;
-              }}
-            />
+        <main
+          ref={feedRef}
+          className={`reels-feed relative overflow-y-auto overscroll-y-contain ${
+            isMobileView
+              ? isMobileDevice
+                ? "reels-feed--full"
+                : "reels-feed--mobile"
+              : "reels-feed--full"
+          }`}
+        >
+          <div className="absolute right-4 top-20 z-20 hidden items-center rounded-lg border border-white/20 bg-black/25 p-0.5 text-[10px] backdrop-blur-md sm:flex">
+            <button
+              type="button"
+              aria-pressed={viewMode === "full"}
+              onClick={() => setViewMode("full")}
+              className={`rounded-md px-2.5 py-1.5 font-medium uppercase tracking-[0.12em] transition-colors ${
+                viewMode === "full"
+                  ? "bg-white/90 text-[var(--primary)]"
+                  : "text-white/65 hover:text-white"
+              }`}
+            >
+              Full Screen
+            </button>
+            <button
+              type="button"
+              aria-pressed={viewMode === "mobile"}
+              onClick={() => setViewMode("mobile")}
+              className={`rounded-md px-2.5 py-1.5 font-medium uppercase tracking-[0.12em] transition-colors ${
+                viewMode === "mobile"
+                  ? "bg-white/90 text-[var(--primary)]"
+                  : "text-white/65 hover:text-white"
+              }`}
+            >
+              Mobile View
+            </button>
           </div>
-        ))}
-      </main>
+
+          {videos.map((video, index) => (
+            <div key={video.id} className="h-full" data-index={index} data-video-card>
+              <VideoCard
+                video={video}
+                isActive={activeVideo === index}
+                videoRef={(element) => {
+                  videoRefs.current[index] = element;
+                }}
+              />
+            </div>
+          ))}
+        </main>
+      </div>
     </div>
   );
 }
