@@ -5,6 +5,12 @@ const jwt = require('jsonwebtoken')
 
 async function registerUser(req,res) {
     const {fullname,email,password} = req.body;
+
+    if(!fullname || !email || !password){
+        return res.status(400).json({
+            message:"fullname, email and password are required"
+        })
+    }
      
     const isUserAlreadyExists = await userModel.findOne({
         email
@@ -153,11 +159,27 @@ async function logoutFoodPartner(req,res) {
     })
 }
 
+async function getFoodPartner(req, res) {
+    const foodPartner = await foodpartnerModel.findById(req.params.id).select("-password");
+
+    if (!foodPartner) {
+        return res.status(404).json({
+            message: "Food Partner not found",
+        });
+    }
+
+    res.status(200).json({
+        message: "Food patner retrieved successfully",
+        foodPartner,
+    });
+}
+
 module.exports = {
     registerUser,
     loginUser,
     logoutUser,
     registerFoodPartner,
     loginFoodPartner,
-    logoutFoodPartner
+    logoutFoodPartner,
+    getFoodPartner
 }
