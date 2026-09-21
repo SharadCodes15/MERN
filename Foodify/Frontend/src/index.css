@@ -66,10 +66,27 @@
 
 /* Base Body Application */
 body {
+  margin: 0;
   background-color: var(--bg-canvas);
   color: var(--text-main);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.reels-feed {
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+
+.reels-feed::-webkit-scrollbar {
+  display: none;
 }
 
 /* Custom Surface Binding */

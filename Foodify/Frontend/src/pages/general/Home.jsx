@@ -1,115 +1,191 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function Home() {
-  // Toggle between "user" and "partner" view
-  const [role, setRole] = useState("user");
+const videos = [
+  {
+    id: 1,
+    videoUrl:
+      "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    description:
+      "Fresh handmade sourdough baked this morning with locally sourced ingredients.",
+    storeName: "Atelier Bakery",
+    storeId: "123",
+  },
+  {
+    id: 2,
+    videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+    description:
+      "Authentic Maharashtrian thali prepared fresh today in our neighborhood kitchen.",
+    storeName: "Aai's Kitchen",
+    storeId: "456",
+  },
+];
 
-  const isPartner = role === "partner";
+function VideoCard({ video, isActive, videoRef }) {
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    const element = videoRef.current;
+
+    if (!element || status === "error") {
+      return;
+    }
+
+    if (isActive) {
+      element.play().catch(() => undefined);
+    } else {
+      element.pause();
+    }
+  }, [isActive, status, videoRef]);
 
   return (
-    <div className="relative min-h-screen flex flex-col font-sans selection:bg-neutral-900 selection:text-white dark:selection:bg-neutral-100 dark:selection:text-black">
-      {/* Background Architectural Grid */}
-      <div className="architectural-pattern absolute inset-0 pointer-events-none" />
+    <article className="relative h-[100dvh] w-full snap-start snap-always overflow-hidden bg-[var(--bg-canvas)]">
+      <video
+        ref={videoRef}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+          status === "loaded" ? "opacity-100" : "opacity-0"
+        }`}
+        src={video.videoUrl}
+        muted
+        loop
+        playsInline
+        autoPlay={isActive}
+        preload={isActive ? "auto" : "metadata"}
+        onLoadedData={() => setStatus("loaded")}
+        onError={() => setStatus("error")}
+        aria-label={`${video.storeName} food video`}
+      />
 
-      {/* Navigation Bar */}
-      <header className="relative z-10 w-full border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/85 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          
-          {/* Brand Identity */}
-          <Link to="/" className="flex items-center gap-2.5">
-            <span
-              className={`w-2.5 h-2.5 rounded-full transition-colors duration-300 ${
-                isPartner ? "bg-[var(--partner-primary)]" : "bg-[var(--primary)]"
-              }`}
-            />
-            <span className="font-serif text-lg font-medium tracking-tight text-[var(--text-main)]">
+      {status === "loading" && (
+        <div className="absolute inset-0 flex items-center justify-center text-[var(--text-muted)]">
+          <span className="rounded-full border border-white/30 bg-black/25 px-4 py-2 text-xs uppercase tracking-[0.18em] text-white/80 backdrop-blur-sm">
+            Loading story
+          </span>
+        </div>
+      )}
+
+      {status === "error" && (
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+          <div className="max-w-xs rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)]/90 px-6 py-5 shadow-xl backdrop-blur-md">
+            <p className="font-serif text-xl text-[var(--text-main)]">
+              This story is resting.
+            </p>
+            <p className="mt-2 text-sm text-[var(--text-muted)]">
+              Please try this kitchen again shortly.
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[48%] bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:px-8 sm:pb-10 lg:px-12">
+        <div className="mx-auto max-w-3xl">
+          <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-white/70">
+            {video.storeName}
+          </p>
+          <p className="line-clamp-2 max-w-xl text-sm leading-6 text-white sm:text-base">
+            {video.description}
+          </p>
+          <Link
+            to={`/store/${video.storeId}`}
+            className="pointer-events-auto mt-4 inline-flex min-h-11 items-center justify-center rounded-lg border border-white/35 bg-white/90 px-6 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--primary)] shadow-lg backdrop-blur-md transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            Visit Store
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export default function Home() {
+  const [activeVideo, setActiveVideo] = useState(0);
+  const feedRef = useRef(null);
+  const videoRefs = useRef([]);
+
+  useEffect(() => {
+    const feed = feedRef.current;
+
+    if (!feed) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((first, second) => second.intersectionRatio - first.intersectionRatio)[0];
+
+        if (!visibleEntry) {
+          return;
+        }
+
+        const nextIndex = Number(visibleEntry.target.dataset.index);
+        setActiveVideo(nextIndex);
+      },
+      { root: feed, threshold: [0.6, 0.8, 1] },
+    );
+
+    const cards = feed.querySelectorAll("[data-video-card]");
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (!video) {
+        return;
+      }
+
+      if (index === activeVideo) {
+        video.play().catch(() => undefined);
+      } else {
+        video.pause();
+      }
+    });
+  }, [activeVideo]);
+
+  return (
+    <div className="relative h-[100dvh] overflow-hidden font-sans selection:bg-white selection:text-[var(--primary)]">
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-20 border-b border-white/15 bg-black/20 text-white backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+          <Link to="/" className="pointer-events-auto flex items-center gap-2.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-[var(--primary)] ring-2 ring-white/50" />
+            <span className="font-serif text-base font-medium tracking-tight sm:text-lg">
               Kitchen Atelier
             </span>
           </Link>
 
-          {/* Center Role Switcher (Tactile Segmented Control) */}
-          <div className="flex items-center p-0.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-xs">
-            <button
-              type="button"
-              onClick={() => setRole("user")}
-              className={`px-3 py-1 rounded-md transition-all duration-200 font-medium ${
-                !isPartner
-                  ? "bg-[var(--bg-surface)] text-[var(--text-main)] shadow-sm"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-main)]"
-              }`}
+          <div className="pointer-events-auto flex items-center gap-1 sm:gap-3">
+            <Link
+              to="/user/login"
+              className="rounded-lg px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.14em] text-white/75 transition-colors hover:text-white sm:px-3 sm:text-xs"
             >
-              Customer
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole("partner")}
-              className={`px-3 py-1 rounded-md transition-all duration-200 font-medium ${
-                isPartner
-                  ? "bg-[var(--bg-surface)] text-[var(--text-main)] shadow-sm"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-main)]"
-              }`}
+              Sign In
+            </Link>
+            <Link
+              to="/user/register"
+              className="rounded-lg border border-white/30 bg-white/90 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--primary)] shadow-sm transition-colors hover:bg-white sm:px-3.5 sm:text-xs"
             >
-              Food Partner
-            </button>
-          </div>
-
-          {/* Action Links: Dynamic Based on Role */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {!isPartner ? (
-              <>
-                <Link
-                  to="/user/login"
-                  className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] px-3 py-2 rounded-lg transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/user/register"
-                  className="btn-user text-xs font-medium uppercase tracking-wider px-3.5 py-2 rounded-lg"
-                >
-                  Join Us
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/food-partner/login"
-                  className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] px-3 py-2 rounded-lg transition-colors"
-                >
-                  Merchant Desk
-                </Link>
-                <Link
-                  to="/food-partner/register"
-                  className="btn-partner text-xs font-medium uppercase tracking-wider px-3.5 py-2 rounded-lg"
-                >
-                  Apply Kitchen
-                </Link>
-              </>
-            )}
+              Join Us
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Main Body */}
-      <main className="relative z-10 flex-1 flex items-center justify-center p-6 text-center">
-        <div className="animate-fade-up max-w-3xl mx-auto space-y-4">
-          <div className="inline-block px-2.5 py-1 text-[11px] font-mono tracking-wider uppercase rounded border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-muted)]">
-            {isPartner ? "Culinary Operations" : "Seasonal & Local"}
+      <main ref={feedRef} className="reels-feed h-[100dvh] w-full overflow-y-auto overscroll-y-contain">
+        {videos.map((video, index) => (
+          <div key={video.id} data-index={index} data-video-card>
+            <VideoCard
+              video={video}
+              isActive={activeVideo === index}
+              videoRef={(element) => {
+                videoRefs.current[index] = element;
+              }}
+            />
           </div>
-
-          <h1 className="text-4xl sm:text-6xl font-serif tracking-tight text-[var(--text-main)] leading-tight">
-            {isPartner
-              ? "Tools built for real kitchens, not algorithms."
-              : "Food from kitchens with stories to tell."}
-          </h1>
-
-          <p className="text-sm sm:text-base text-[var(--text-muted)] max-w-lg mx-auto">
-            {isPartner
-              ? "Join independent dining rooms, artisanal bakeries, and popup makers managing their tables and direct pickup menus."
-              : "Connect with neighborhood cooks, artisan sourdough bakers, and seasonal farm tables."}
-          </p>
-        </div>
+        ))}
       </main>
     </div>
   );
