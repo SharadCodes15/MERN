@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 
 const fallbackPartner = {
 	name: "Neighborhood Kitchen",
-	address: "Local kitchen, downtown",
+	email: "",
 };
 
 function VideoTile({ item }) {
@@ -51,22 +51,24 @@ export default function Profile() {
 	const [partner, setPartner] = useState(fallbackPartner);
 
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/api/food", { withCredentials: true })
-			.then((response) => {
-				const allFoods = response.data.foodItems ?? [];
-				const partnerFoods = partnerId
-					? allFoods.filter((item) => item.foodpartner === partnerId)
-					: allFoods;
+		const foodRequest = axios.get("http://localhost:3000/api/food", {
+			withCredentials: true,
+		});
+		const partnerRequest = axios.get(
+			`http://localhost:3000/api/foodpartner/${partnerId}`,
+			{ withCredentials: true },
+		);
+
+		Promise.all([foodRequest, partnerRequest])
+			.then(([foodResponse, partnerResponse]) => {
+				const allFoods = foodResponse.data.foodItems ?? [];
+				const partnerFoods = allFoods.filter((item) => item.foodpartner === partnerId);
 
 				setFoods(partnerFoods);
-
-				if (partnerFoods[0]) {
-					setPartner({
-						name: partnerFoods[0].foodpartnerName || "Neighborhood Kitchen",
-						address: partnerFoods[0].address || "Local kitchen, downtown",
-					});
-				}
+				setPartner({
+					name: partnerResponse.data.foodPartner?.name || fallbackPartner.name,
+					email: partnerResponse.data.foodPartner?.email || fallbackPartner.email,
+				});
 			})
 			.catch((error) => {
 				console.error("Failed to fetch partner profile:", error);
@@ -83,7 +85,7 @@ export default function Profile() {
 						</div>
 						<div className="min-w-0 flex-1 pt-1">
 							<h1 className="truncate text-lg font-semibold tracking-tight">{partner.name}</h1>
-							<p className="mt-1 truncate text-sm text-[var(--text-muted)]">{partner.address}</p>
+							<p className="mt-1 truncate text-sm text-[var(--text-muted)]">{partner.email}</p>
 						</div>
 						<Link
 							to="/home"

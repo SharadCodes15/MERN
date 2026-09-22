@@ -59,13 +59,13 @@ export default function CreateFood() {
     data.append("video", videoFile);
 
     try {
-      await axios.post("http://localhost:3000/api/food/", data, {
+      const partner = await axios.post("http://localhost:3000/api/food", data, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      navigate("/partner/dashboard");
+      navigate(`http://localhost:3000/api/foodpartner/${partner.foodpartner}`);
     } catch (err) {
       console.error("Failed to add food item:", err);
     } finally {

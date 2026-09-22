@@ -2,8 +2,11 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import ReelActions from "./ReelActions";
 
-function VideoCard({ video, isActive, videoRef }) {
+const API_URL = "http://localhost:3000/api";
+
+function VideoCard({ video, isActive, videoRef, onLike, onSave }) {
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
@@ -61,6 +64,11 @@ function VideoCard({ video, isActive, videoRef }) {
       )}
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[48%] bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+      <ReelActions
+        video={video}
+        onLike={() => onLike(video._id)}
+        onSave={() => onSave(video._id)}
+      />
       <div className="absolute inset-x-0 bottom-0 z-10 px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:px-8 sm:pb-10 lg:px-12">
         <div className="mx-auto max-w-3xl">
           <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-white/70">
@@ -92,9 +100,9 @@ export default function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/food", { withCredentials: true })
+      .get(`${API_URL}/food`, { withCredentials: true })
       .then((response) => {
-        setVideos(response.data.foodItems);
+        setVideos(response.data.foodItems ?? []);
         setIsAuthenticated(true);
       })
       .catch((error) => {
@@ -118,7 +126,7 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:3000/api/auth/user/logout", {
+      await axios.get(`${API_URL}/auth/user/logout`, {
         withCredentials: true,
       });
     } catch (error) {
@@ -172,6 +180,51 @@ export default function Home() {
     });
   }, [activeVideo]);
 
+  const updateVideo = (videoId, changes) => {
+    setVideos((currentVideos) =>
+      currentVideos.map((video) =>
+        video._id === videoId ? { ...video, ...changes } : video,
+      ),
+    );
+  };
+
+  const handleLike = async (videoId) => {
+    const video = videos.find((item) => item._id === videoId);
+    if (!video || video.likePending) {
+      return;
+    }
+
+    const liked = !video.liked;
+    const likeCount = Math.max(0, (video.likes ?? video.likeCount ?? 0) + (liked ? 1 : -1));
+    updateVideo(videoId, { liked, likes: likeCount, likeCount, likePending: true });
+
+    try {
+      await axios.post(`${API_URL}/like`, { foodId: videoId }, { withCredentials: true });
+      updateVideo(videoId, { likePending: false });
+    } catch (error) {
+      updateVideo(videoId, { liked: !liked, likes: likeCount - (liked ? 1 : -1), likeCount: likeCount - (liked ? 1 : -1), likePending: false });
+      console.error("Failed to update like:", error);
+    }
+  };
+
+  const handleSave = async (videoId) => {
+    const video = videos.find((item) => item._id === videoId);
+    if (!video || video.savePending) {
+      return;
+    }
+
+    const saved = !video.saved;
+    updateVideo(videoId, { saved, savePending: true });
+
+    try {
+      await axios.post(`${API_URL}/save`, { foodId: videoId }, { withCredentials: true });
+      updateVideo(videoId, { savePending: false });
+    } catch (error) {
+      updateVideo(videoId, { saved: !saved, savePending: false });
+      console.error("Failed to update saved item:", error);
+    }
+  };
+
   return (
     <div className="relative h-[100dvh] overflow-hidden bg-[var(--bg-canvas)] p-2 font-sans selection:bg-white selection:text-[var(--primary)] sm:p-4">
       <div className="relative h-full overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-black shadow-[var(--shadow-subtle)]">
@@ -188,6 +241,8 @@ export default function Home() {
               <VideoCard
                 video={video}
                 isActive={activeVideo === index}
+                onLike={handleLike}
+                onSave={handleSave}
                 videoRef={(element) => {
                   videoRefs.current[index] = element;
                 }}
