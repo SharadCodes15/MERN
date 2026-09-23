@@ -31,10 +31,21 @@ async function createFood(req, res) {
 }
 
 async function GetFoodsItems(req,res) {
-    const foodItems = await foodModel.find({});
+    const [foodItems, userLikes, userSaves] = await Promise.all([
+      foodModel.find({}),
+      likesModel.find({ user: req.user._id }).select("food"),
+      saveModel.find({ user: req.user._id }).select("food"),
+    ]);
+    const likedFoodIds = new Set(userLikes.map((like) => like.food.toString()));
+    const savedFoodIds = new Set(userSaves.map((save) => save.food.toString()));
+
     res.status(200).json({
         message:"Food Item fetched Successfully",
-        foodItems:foodItems
+        foodItems: foodItems.map((foodItem) => ({
+          ...foodItem.toObject(),
+          liked: likedFoodIds.has(foodItem._id.toString()),
+          saved: savedFoodIds.has(foodItem._id.toString()),
+        }))
     })
     
 }
@@ -108,10 +119,32 @@ async function SaveFood(req,res) {
   })
 }
 
+async function GetSavedFoods(req, res) {
+  const savedRecords = await saveModel
+    .find({ user: req.user._id })
+    .sort({ createdAt: -1 })
+    .select("food");
+  const savedFoodIds = savedRecords.map((record) => record.food);
+  const foodItems = await foodModel.find({ _id: { $in: savedFoodIds } });
+  const foodById = new Map(foodItems.map((foodItem) => [foodItem._id.toString(), foodItem]));
+
+  res.status(200).json({
+    message: "Saved food items fetched successfully",
+    savedItems: savedFoodIds
+      .map((foodId) => foodById.get(foodId.toString()))
+      .filter(Boolean)
+      .map((foodItem) => ({
+        ...foodItem.toObject(),
+        saved: true,
+      })),
+  });
+}
+
 
 module.exports = {
   createFood,
   GetFoodsItems,
   likeFood,
-  SaveFood
+  SaveFood,
+  GetSavedFoods
 };
