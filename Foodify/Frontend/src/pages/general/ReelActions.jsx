@@ -4,6 +4,8 @@ import {
   RiChat3Line,
   RiHeart3Fill,
   RiHeart3Line,
+  RiMoreLine,
+  RiShareForwardLine,
 } from "@remixicon/react";
 
 function ActionButton({ label, count, active, onClick, children, disabled }) {
@@ -12,11 +14,12 @@ function ActionButton({ label, count, active, onClick, children, disabled }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      aria-label={`${active ? "Remove" : "Add"} ${label}`}
+      aria-label={`${active ? "Remove from" : "Add to"} ${label}`}
       className={`reel-action ${active ? "reel-action--active" : ""}`}
     >
-      {children}
-      <span>{count}</span>
+      <span className="reel-action__icon">{children}</span>
+      <span className="reel-action__count">{count}</span>
+      <span className="reel-action__label">{label}</span>
     </button>
   );
 }
@@ -45,9 +48,17 @@ export default function ReelActions({ video, onLike, onSave }) {
         {video.saved ? <RiBookmarkFill /> : <RiBookmarkLine />}
       </ActionButton>
       <div className="reel-action" aria-label={`${video.comments ?? video.commentCount ?? 0} comments`}>
-        <RiChat3Line />
-        <span>{video.comments ?? video.commentCount ?? 0}</span>
+        <span className="reel-action__icon"><RiChat3Line /></span>
+        <span className="reel-action__count">{video.comments ?? video.commentCount ?? 0}</span>
+        <span className="reel-action__label">comments</span>
       </div>
+      <button type="button" className="reel-action reel-action--utility" aria-label="Share reel">
+        <span className="reel-action__icon"><RiShareForwardLine /></span>
+        <span className="reel-action__label">share</span>
+      </button>
+      <button type="button" className="reel-action reel-action--utility" aria-label="More reel options">
+        <span className="reel-action__icon"><RiMoreLine /></span>
+      </button>
     </aside>
   );
 }

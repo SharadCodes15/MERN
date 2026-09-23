@@ -216,39 +216,69 @@ body,
 
 .reel-actions {
   position: absolute;
-  right: 1rem;
-  bottom: 9.25rem;
+  right: 0.85rem;
+  bottom: 8.5rem;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.95rem;
 }
 
 .reel-action {
+  appearance: none;
+  border: 0;
+  background: transparent;
   display: flex;
-  min-width: 2.75rem;
+  min-width: 3.1rem;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.15rem;
   color: white;
+  cursor: pointer;
   font-size: 0.7rem;
+  font-weight: 600;
   text-shadow: 0 1px 4px rgb(0 0 0 / 70%);
-  transition: color 160ms ease, transform 160ms ease;
+  transition: color 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+.reel-action:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .reel-action:hover {
   transform: scale(1.08);
 }
 
-.reel-action svg {
-  width: 1.75rem;
-  height: 1.75rem;
+.reel-action__icon {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 28%);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 28%);
+  backdrop-filter: blur(10px);
+}
+
+.reel-action__icon svg {
+  width: 1.55rem;
+  height: 1.55rem;
   filter: drop-shadow(0 1px 3px rgb(0 0 0 / 55%));
 }
 
+.reel-action__count { line-height: 1; }
+.reel-action__label { font-size: 0.64rem; text-transform: lowercase; }
+.reel-action--utility .reel-action__icon { width: 2.35rem; height: 2.35rem; }
+
 .reel-action--active {
-  color: #ffaaa5;
+  color: #ffb0ae;
+}
+
+.reel-action--active .reel-action__icon {
+  border-color: rgb(255 176 174 / 75%);
+  background: rgb(157 35 53 / 38%);
 }
 
 @media (max-width: 639px) {

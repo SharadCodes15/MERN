@@ -199,10 +199,11 @@ export default function Home() {
     updateVideo(videoId, { liked, likes: likeCount, likeCount, likePending: true });
 
     try {
-      await axios.post(`${API_URL}/like`, { foodId: videoId }, { withCredentials: true });
+      await axios.post(`${API_URL}/food/like`, { foodId: videoId }, { withCredentials: true });
       updateVideo(videoId, { likePending: false });
     } catch (error) {
-      updateVideo(videoId, { liked: !liked, likes: likeCount - (liked ? 1 : -1), likeCount: likeCount - (liked ? 1 : -1), likePending: false });
+      const rollbackCount = Math.max(0, likeCount - (liked ? 1 : -1));
+      updateVideo(videoId, { liked: !liked, likes: rollbackCount, likeCount: rollbackCount, likePending: false });
       console.error("Failed to update like:", error);
     }
   };
@@ -214,13 +215,15 @@ export default function Home() {
     }
 
     const saved = !video.saved;
-    updateVideo(videoId, { saved, savePending: true });
+    const saveCount = Math.max(0, (video.saves ?? video.saveCount ?? 0) + (saved ? 1 : -1));
+    updateVideo(videoId, { saved, saves: saveCount, saveCount, savePending: true });
 
     try {
-      await axios.post(`${API_URL}/save`, { foodId: videoId }, { withCredentials: true });
+      await axios.post(`${API_URL}/food/save`, { foodId: videoId }, { withCredentials: true });
       updateVideo(videoId, { savePending: false });
     } catch (error) {
-      updateVideo(videoId, { saved: !saved, savePending: false });
+      const rollbackCount = Math.max(0, saveCount - (saved ? 1 : -1));
+      updateVideo(videoId, { saved: !saved, saves: rollbackCount, saveCount: rollbackCount, savePending: false });
       console.error("Failed to update saved item:", error);
     }
   };

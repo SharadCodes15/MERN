@@ -12,7 +12,7 @@ export default function Saved() {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/save`, { withCredentials: true })
+      .get(`${API_URL}/food/save`, { withCredentials: true })
       .then((response) => {
         setSavedItems(response.data.savedItems ?? response.data.foodItems ?? response.data.saved ?? []);
       })
