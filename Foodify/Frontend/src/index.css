@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Playwrite+BE+WAL+Guides&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -71,6 +73,20 @@ body {
   color: var(--text-main);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+  /* font-family: 'Inter', sans-serif; */
+    font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+
+}
+
+.Navicon{
+    font-family: "Playwrite BE WAL Guides", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 
 html,
