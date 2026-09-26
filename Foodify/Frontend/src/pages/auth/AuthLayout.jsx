@@ -7,53 +7,93 @@ export default function AuthLayout({
   partnerMode = false,
 }) {
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-10 font-sans selection:bg-neutral-900 selection:text-white dark:selection:bg-neutral-100 dark:selection:text-black">
-      {/* Dynamic Background Pattern */}
-      <div className="architectural-pattern absolute inset-0 pointer-events-none" />
+    <main className="relative min-h-screen overflow-auto bg-[#ddd7ce] p-3 font-sans sm:p-5 lg:p-8">
+      {/* Background */}
+      <div className="pointer-events-none absolute inset-0 opacity-40">
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-orange-300/20 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-black/10 blur-3xl" />
+      </div>
 
-      {/* Main Responsive Grid Container */}
-      <div className="relative z-10 w-full max-w-5xl auth-surface rounded-2xl border overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
-        {/* Left Side: Context / Branding Sidebar */}
-        <div
-          className={`lg:col-span-5 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--border-subtle)] ${
-            partnerMode ? "bg-[#18110e] text-[#fbeee9]" : "bg-[#0b1411] text-[#e8f1ec]"
+      {/* Main Container */}
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-24px)] w-full max-w-6xl overflow-hidden rounded-[30px] border border-black/10 bg-[#fffaf3] shadow-[0_25px_80px_rgba(0,0,0,0.15)] sm:min-h-[calc(100vh-40px)] lg:grid-cols-12">
+        
+        {/* ================= LEFT PANEL ================= */}
+        <section
+          className={`relative flex flex-col justify-between p-7 text-white sm:p-10 lg:col-span-5 ${
+            partnerMode ? "bg-[#191919]" : "bg-[#f6ad3d]"
           }`}
         >
+          {/* Brand */}
           <div>
             <div className="flex items-center gap-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  partnerMode ? "bg-[var(--partner-primary)]" : "bg-[var(--primary)]"
+              <span
+                className={`h-2.5 w-2.5 rounded-full ${
+                  partnerMode ? "bg-orange-500" : "bg-black"
                 }`}
               />
-              <span className="text-xs font-semibold tracking-wider uppercase opacity-80">
+
+              <span
+                className={`text-[10px] font-black uppercase tracking-[0.18em] ${
+                  partnerMode ? "text-white/60" : "text-black/60"
+                }`}
+              >
                 {badgeText}
               </span>
             </div>
 
-            <div className="mt-14 space-y-3">
-              <h2 className="text-2xl sm:text-3xl font-serif tracking-tight leading-snug">
+            {/* Headline */}
+            <div className="mt-16 space-y-4">
+              <h2
+                className={`max-w-md text-3xl font-black leading-[1.05] tracking-[-0.04em] sm:text-4xl ${
+                  partnerMode ? "text-white" : "text-black"
+                }`}
+              >
                 {headline}
               </h2>
-              <p className="text-sm leading-relaxed opacity-70">
+
+              <p
+                className={`max-w-md text-sm leading-6 ${
+                  partnerMode ? "text-white/55" : "text-black/55"
+                }`}
+              >
                 {description}
               </p>
             </div>
           </div>
 
-          <div className="mt-12 pt-6 border-t border-white/10">
-            <p className="text-xs italic opacity-60">“Crafted with respect for real ingredients and human scale.”</p>
-            <p className="text-xs font-medium mt-1 tracking-wide uppercase opacity-40">
+          {/* Quote */}
+          <div
+            className={`mt-12 border-t pt-6 ${
+              partnerMode
+                ? "border-white/10"
+                : "border-black/10"
+            }`}
+          >
+            <p
+              className={`text-xs italic leading-5 ${
+                partnerMode ? "text-white/50" : "text-black/50"
+              }`}
+            >
+              “Crafted with respect for real ingredients and human scale.”
+            </p>
+
+            <p
+              className={`mt-2 text-[10px] font-black uppercase tracking-[0.15em] ${
+                partnerMode ? "text-white/30" : "text-black/35"
+              }`}
+            >
               — {quoteAuthor}
             </p>
           </div>
-        </div>
+        </section>
 
-        {/* Right Side: Interactive Forms */}
-        <div className="lg:col-span-7 p-6 sm:p-10 md:p-12 flex flex-col justify-center bg-[var(--bg-surface)]">
-          {children}
-        </div>
+        {/* ================= RIGHT PANEL ================= */}
+        <section className="flex items-center justify-center bg-[#fffaf3] p-6 sm:p-10 md:p-12 lg:col-span-7">
+          <div className="w-full max-w-md">
+            {children}
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
