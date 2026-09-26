@@ -1,20 +1,106 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 const LandingNavbar = () => {
   return (
-    <>
-      <nav class="LandingNav absolute inset-x-3 top-2 bg-amber-400 text-black px-6 py-4 rounded-2xl flex items-center justify-between gap-3">
-        <div className="Navicon gap-3 flex flex-row align-middle justify-between font-extrabold">Chef-King</div>
-        <div className="links gap-6 flex flex-row align-middle justify-between font-medium">
-          <Link to="/">Home</Link>
-          <Link to="/saved">Saved</Link>
-        </div>
-        <div className="authButtons gap-3 flex flex-row align-middle justify-between font-medium">
-          <Link to="/user/register">Register</Link>
-          <Link to="/user/login">login</Link>
-        </div>
-      </nav>
-    </>
+    <nav
+      className="
+        LandingNav
+        absolute
+        left-3
+        right-3
+        top-3
+        z-50
+        flex
+        items-center
+        justify-between
+        rounded-2xl
+        bg-amber-400
+        px-5
+        py-3
+        text-black
+        shadow-lg
+        md:px-7
+      "
+    >
+      {/* Logo */}
+      <Link
+        to="/"
+        className="
+          text-xl
+          font-black
+          tracking-tight
+          transition-transform
+          duration-300
+          hover:scale-105
+        "
+      >
+        CRAVE.
+      </Link>
+
+      {/* Navigation */}
+      <div className="hidden items-center gap-8 font-semibold md:flex">
+        <Link
+          to="/"
+          className="
+            relative
+            transition-opacity
+            duration-300
+            hover:opacity-60
+          "
+        >
+          Home
+        </Link>
+
+        <Link
+          to="/saved"
+          className="
+            relative
+            transition-opacity
+            duration-300
+            hover:opacity-60
+          "
+        >
+          Saved
+        </Link>
+      </div>
+
+      {/* Auth */}
+      <div className="flex items-center gap-2 font-semibold">
+        <Link
+          to="/user/login"
+          className="
+            rounded-full
+            px-4
+            py-2
+            transition-all
+            duration-300
+            hover:bg-black
+            hover:text-white
+          "
+        >
+          Login
+        </Link>
+
+        <Link
+          to="/user/register"
+          className="
+            rounded-full
+            bg-black
+            px-5
+            py-2
+            text-white
+            transition-all
+            duration-300
+            hover:scale-105
+            hover:bg-white
+            hover:text-black
+          "
+        >
+          Register
+        </Link>
+      </div>
+    </nav>
   );
 };
 
