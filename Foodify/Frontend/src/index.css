@@ -83,14 +83,6 @@ body {
 
 }
 
-.Navicon{
-    font-family: "Playwrite BE WAL Guides", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-
-
-
 .reels-feed {
   scroll-snap-type: y mandatory;
   scrollbar-width: none;

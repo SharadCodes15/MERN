@@ -1,0 +1,72 @@
+
+.Navicon{
+    font-family: "Playwrite BE WAL Guides", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+.hero-section {
+  position: relative;
+}
+
+.hero-background {
+  z-index: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Large background text */
+
+.hero-slide h1 {
+  position: absolute;
+
+  font-size: clamp(80px, 15vw, 220px);
+  font-weight: 900;
+  line-height: 0.8;
+
+  text-align: center;
+
+  color: #ff9d00;
+
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+/* Food image */
+
+.hero-slide img {
+  position: relative;
+
+  width: min(500px, 45vw);
+
+  object-fit: contain;
+
+  z-index: 2;
+}
+
+/* Initial states */
+.hero-slide-1 {
+  opacity: 1;
+}
+
+.hero-slide-2,
+.hero-slide-3 {
+  opacity: 0;
+}

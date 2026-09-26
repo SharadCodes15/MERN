@@ -2,10 +2,12 @@ import React from 'react'
 import LandingNavbar from './LandingNavbar';
 import VideoSection from './VideoSection'
 import HeroLand from './HeroLand';
+import './Landing.css'
 const Landingpage = () => {
   return (
     <div>
       <main>
+        
         <HeroLand/>
         {/* <VideoSection/> */}
         <section className="h-screen bg-black">
