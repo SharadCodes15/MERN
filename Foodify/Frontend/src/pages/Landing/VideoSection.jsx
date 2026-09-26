@@ -1,4 +1,5 @@
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef } from "react";
+
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -6,53 +7,18 @@ gsap.registerPlugin(ScrollTrigger);
 
 const TOTAL_FRAMES = 158;
 
-const App = () => {
+const VideoSection = () => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // -----------------------------------------
-  // Normal GSAP element animations
-  // -----------------------------------------
-  // useLayoutEffect(() => {
-  //   const ctx = gsap.context(() => {
-  //     const boxes = gsap.utils.toArray(".animated-box");
-
-  //     boxes.forEach((box) => {
-  //       gsap.fromTo(
-  //         box,
-  //         {
-  //           opacity: 0,
-  //           y: 60,
-  //           scale: 0.95,
-  //         },
-  //         {
-  //           opacity: 1,
-  //           y: 0,
-  //           scale: 1,
-  //           duration: 1,
-  //           ease: "power3.out",
-
-  //           scrollTrigger: {
-  //             trigger: box,
-  //             start: "top 80%",
-  //             end: "top 50%",
-  //             scrub: true,
-  //           },
-  //         }
-  //       );
-  //     });
-  //   }, containerRef);
-
-  //   return () => ctx.revert();
-  // }, []);
-
-  // -----------------------------------------
-  // Canvas frame animation
-  // -----------------------------------------
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
+
+      // =========================================
+      // FRAME STATE
+      // =========================================
 
       const frameState = {
         frame: 0,
@@ -60,9 +26,10 @@ const App = () => {
 
       const frameImages = [];
 
-      // -----------------------------
-      // Render frame
-      // -----------------------------
+      // =========================================
+      // RENDER FRAME
+      // =========================================
+
       const renderFrame = (frameIndex) => {
         const img = frameImages[frameIndex];
 
@@ -70,31 +37,19 @@ const App = () => {
           return;
         }
 
-        context.clearRect(
-          0,
-          0,
-          window.innerWidth,
-          window.innerHeight
-        );
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-        context.drawImage(
-          img,
-          0,
-          0,
-          window.innerWidth,
-          window.innerHeight
-        );
+        context.drawImage(img, 0, 0, window.innerWidth, window.innerHeight);
       };
 
-      // -----------------------------
-      // Load all frames
-      // -----------------------------
+      // =========================================
+      // LOAD ALL FRAMES
+      // =========================================
+
       for (let index = 1; index <= TOTAL_FRAMES; index++) {
         const img = new Image();
 
-        img.src = `/frames/frame_${index
-          .toString()
-          .padStart(4, "0")}.jpg`;
+        img.src = `/frames/frame_${index.toString().padStart(4, "0")}.jpg`;
 
         img.onload = () => {
           renderFrame(Math.round(frameState.frame));
@@ -103,19 +58,23 @@ const App = () => {
         frameImages.push(img);
       }
 
-      // -----------------------------
-      // Canvas resize
-      // -----------------------------
+      // =========================================
+      // CANVAS RESIZE
+      // =========================================
+
       const resizeCanvas = () => {
-        const scale = window.devicePixelRatio || 1;
+        const dpr = window.devicePixelRatio || 1;
 
-        canvas.width = window.innerWidth * scale;
-        canvas.height = window.innerHeight * scale;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
-        canvas.style.width = `${window.innerWidth}px`;
-        canvas.style.height = `${window.innerHeight}px`;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
 
-        context.setTransform(scale, 0, 0, scale, 0, 0);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         renderFrame(Math.round(frameState.frame));
       };
@@ -124,117 +83,278 @@ const App = () => {
 
       window.addEventListener("resize", resizeCanvas);
 
-      // -----------------------------------------
-      // IMPORTANT PART
-      // -----------------------------------------
-      const frameTween = gsap.to(frameState, {
-        frame: TOTAL_FRAMES - 1,
+      // =========================================
+      // INITIAL TEXT STATE
+      // =========================================
+
+      gsap.set(".layer-text", {
+        opacity: 0,
+        y: 50,
+      });
+
+      gsap.set(".crave-text", {
+        opacity: 0,
+        y: 50,
+      });
+
+      // =========================================
+      // MASTER SCROLL TIMELINE
+      // =========================================
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+
+          start: "top top",
+
+          // Total scroll distance
+          end: "+=3000",
+
+          scrub: 1,
+
+          // ONLY THIS SCROLLTRIGGER PINS
+          pin: true,
+
+          anticipatePin: 1,
+
+          // markers: true,
+        },
+      });
+
+      // =========================================
+      // 1. BURGER → EXPLODED
+      // FRAME 0 → 70
+      // =========================================
+
+      tl.to(frameState, {
+        frame: 70,
 
         snap: "frame",
 
         ease: "none",
 
-        scrollTrigger: {
-          trigger: containerRef.current,
-
-          // Start when video section reaches top
-          start: "top top",
-
-          // Give this section 2500px of scrolling
-          end: "+=2500",
-
-          // Smoothly connect animation to scroll
-          scrub: true,
-
-          // Keep ONLY this section pinned
-          pin: true,
-
-          // Optional
-          anticipatePin: 1,
-
-          // markers: true,
-        },
+        duration: 2,
 
         onUpdate: () => {
           renderFrame(Math.round(frameState.frame));
         },
       });
 
-      return () => {
-        frameTween.kill();
+      // =========================================
+      // 2. EVERY LAYER MATTERS
+      // =========================================
 
-        window.removeEventListener(
-          "resize",
-          resizeCanvas
-        );
+      tl.to(".layer-text", {
+        opacity: 1,
+
+        y: 0,
+
+        duration: 0.5,
+      });
+
+      // =========================================
+      // 3. HOLD TEXT
+      // =========================================
+
+      tl.to(
+        {},
+        {
+          duration: 0.8,
+        },
+      );
+
+      // =========================================
+      // 4. FADE TEXT
+      // =========================================
+
+      tl.to(".layer-text", {
+        opacity: 0,
+
+        y: -50,
+
+        duration: 0.5,
+      });
+
+      // =========================================
+      // 5. EXPLODED → REASSEMBLING
+      // FRAME 70 → 115
+      // =========================================
+
+      tl.to(frameState, {
+        frame: 115,
+
+        snap: "frame",
+
+        ease: "none",
+
+        duration: 2,
+
+        onUpdate: () => {
+          renderFrame(Math.round(frameState.frame));
+        },
+      });
+
+      // =========================================
+      // 6. BUILT TO CRAVE
+      // =========================================
+
+      tl.fromTo(
+        ".crave-text",
+
+        {
+          opacity: 0,
+          y: 50,
+        },
+
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+        },
+      );
+
+      // =========================================
+      // 7. FINISH BURGER
+      // FRAME 115 → 157
+      // =========================================
+
+      tl.to(frameState, {
+        frame: TOTAL_FRAMES - 1,
+
+        snap: "frame",
+
+        ease: "none",
+
+        duration: 2,
+
+        onUpdate: () => {
+          renderFrame(Math.round(frameState.frame));
+        },
+      });
+
+      // =========================================
+      // 8. CANVAS SCALE
+      // =========================================
+
+      gsap.fromTo(
+        canvasRef.current,
+
+        {
+          scale: 0.8,
+        },
+
+        {
+          scale: 1,
+
+          ease: "none",
+
+          scrollTrigger: {
+            trigger: containerRef.current,
+
+            start: "top 60%",
+
+            end: "top top",
+
+            scrub: true,
+
+            // IMPORTANT:
+            // No pin here
+          },
+        },
+      );
+
+      // =========================================
+      // CLEANUP
+      // =========================================
+
+      return () => {
+        window.removeEventListener("resize", resizeCanvas);
       };
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+    };
   }, []);
 
+  // =========================================
+  // JSX
+  // =========================================
+
   return (
-    <main>
+    <section
+      ref={containerRef}
+      className="relative h-screen w-full overflow-hidden bg-black"
+    >
+      {/* ================================= */}
+      {/* CANVAS */}
+      {/* ================================= */}
 
-      {/* -------------------------------- */}
-      {/* NORMAL SECTION BEFORE VIDEO */}
-      {/* -------------------------------- */}
-{/* 
-      <section className="h-screen bg-blue-500 flex items-center justify-center">
-        <h1 className="text-6xl text-white">
-          Hero Section
-        </h1>
-      </section> */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 h-full w-full"
+        style={{
+          zIndex: 0,
+          transformOrigin: "center center",
+          pointerEvents: "none",
+        }}
+      />
 
+      {/* ================================= */}
+      {/* TEXT LAYER */}
+      {/* ================================= */}
 
-      {/* -------------------------------- */}
-      {/* VIDEO / CANVAS SECTION */}
-      {/* -------------------------------- */}
-
-      <section
-        ref={containerRef}
-        className="relative h-screen bg-black overflow-hidden"
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          z-10
+          flex
+          items-center
+          justify-center
+        "
       >
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 w-full h-full"
-          style={{
-            width: "100%",
-            height: "100%",
-            zIndex: 0,
-            pointerEvents: "none",
-          }}
-        />
+        {/* EVERY LAYER MATTERS */}
 
-        {/* Optional content over canvas */}
+        <h2
+          className="
+            layer-text
+            absolute
+            text-center
+            text-5xl
+            font-black
+            text-white
+            md:text-7xl
+            lg:text-8xl
+          "
+        >
+          EVERY LAYER
+          <br />
+          MATTERS
+        </h2>
 
-        <div className="relative z-10 h-full flex items-center justify-center">
-          <h1 className="text-white text-6xl font-bold">
-            Scroll
-          </h1>
-        </div>
-      </section>
+        {/* BUILT TO CRAVE */}
 
-
-      {/* -------------------------------- */}
-      {/* NORMAL SECTION AFTER VIDEO */}
-      {/* -------------------------------- */}
-
-      {/* <section className="h-screen bg-green-500 flex items-center justify-center">
-        <h1 className="text-6xl text-white">
-          Section 3
-        </h1>
-      </section>
-
-
-      <section className="h-screen bg-purple-500 flex items-center justify-center">
-        <h1 className="text-6xl text-white">
-          Section 4
-        </h1>
-      </section> */}
-
-    </main>
+        <h2
+          className="
+            crave-text
+            absolute
+            text-center
+            text-5xl
+            font-black
+            text-white
+            md:text-7xl
+            lg:text-8xl
+          "
+        >
+          BUILT TO
+          <br />
+          CRAVE
+        </h2>
+      </div>
+    </section>
   );
 };
 
-export default App;
+export default VideoSection;
