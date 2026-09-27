@@ -1,0 +1,1837 @@
+/* =========================================================
+   CRAVE
+   CREATE FOOD — ONE PAGE EDITOR
+========================================================= */
+
+
+/* =========================================================
+   FONTS
+========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap");
+
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root {
+  --crave-bg: #f5f1e8;
+  --crave-card: #fffdf8;
+
+  --crave-green: #17352a;
+  --crave-green-2: #2f704b;
+  --crave-green-soft: #dce9d7;
+
+  --crave-orange: #e86d32;
+  --crave-orange-soft: #f2a05e;
+
+  --crave-input: #f7f3ea;
+
+  --crave-border: rgba(23, 53, 42, 0.1);
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.crave-page {
+  position: relative;
+
+  width: 100%;
+  min-height: 100vh;
+
+  overflow-x: hidden;
+
+  background: var(--crave-bg);
+
+  color: var(--crave-green);
+
+  font-family:
+    "DM Sans",
+    sans-serif;
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.crave-background {
+  position: fixed;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  overflow: hidden;
+
+  z-index: 0;
+}
+
+.crave-bg-circle {
+  position: absolute;
+
+  border-radius: 999px;
+
+  filter: blur(70px);
+}
+
+.crave-bg-green {
+  width: 280px;
+  height: 280px;
+
+  left: -120px;
+  top: 15%;
+
+  background: rgba(220, 233, 215, 0.8);
+}
+
+.crave-bg-orange {
+  width: 320px;
+  height: 320px;
+
+  right: -150px;
+  top: 35%;
+
+  background: rgba(242, 160, 94, 0.13);
+}
+
+.crave-bg-green-two {
+  width: 250px;
+  height: 250px;
+
+  left: 40%;
+  bottom: -150px;
+
+  background: rgba(220, 233, 215, 0.35);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.crave-header {
+  position: relative;
+
+  z-index: 20;
+
+  padding:
+    12px
+    16px
+    0;
+}
+
+.crave-nav {
+  width: 100%;
+  max-width: 1400px;
+
+  height: 58px;
+
+  margin: 0 auto;
+
+  padding:
+    0 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border:
+    1px solid
+    rgba(23, 53, 42, 0.1);
+
+  border-radius: 999px;
+
+  background:
+    rgba(249, 247, 240, 0.9);
+
+  box-shadow:
+    0 10px 40px
+    rgba(23, 53, 42, 0.05);
+
+  backdrop-filter: blur(20px);
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.crave-logo-link {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  color: var(--crave-green);
+
+  text-decoration: none;
+}
+
+.crave-logo-mark {
+  width: 31px;
+  height: 31px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: white;
+
+  background: var(--crave-green);
+}
+
+.crave-logo-text {
+  position: relative;
+
+  font-family:
+    "DM Serif Display",
+    serif;
+
+  font-size: 21px;
+
+  line-height: 1;
+
+  letter-spacing: -0.04em;
+}
+
+.crave-logo-text > span {
+  color: var(--crave-orange);
+}
+
+.crave-logo-text small {
+  position: absolute;
+
+  left: 1px;
+
+  bottom: -9px;
+
+  font-family:
+    "DM Sans",
+    sans-serif;
+
+  font-size: 5px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.2em;
+
+  color:
+    rgba(23, 53, 42, 0.4);
+}
+
+
+/* =========================================================
+   NAV LINKS
+========================================================= */
+
+.crave-nav-links {
+  display: flex;
+
+  align-items: center;
+
+  gap: 30px;
+}
+
+.crave-nav-links a,
+.crave-nav-links span {
+  font-size: 11px;
+
+  font-weight: 600;
+
+  color:
+    rgba(23, 53, 42, 0.45);
+
+  text-decoration: none;
+
+  transition: 0.2s;
+}
+
+.crave-nav-links a:hover {
+  color: var(--crave-green);
+}
+
+.crave-nav-links .active {
+  color: var(--crave-green);
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.crave-back-button {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding:
+    9px
+    15px;
+
+  border-radius: 999px;
+
+  color: white;
+
+  background: var(--crave-green);
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+
+.crave-back-button:hover {
+  background: var(--crave-green-2);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.crave-container {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  padding:
+    25px
+    16px
+    15px;
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.crave-intro {
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  padding:
+    12px
+    0
+    22px;
+}
+
+.crave-eyebrow {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 7px;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.24em;
+
+  color:
+    rgba(23, 53, 42, 0.42);
+}
+
+.crave-eyebrow span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: var(--crave-orange);
+}
+
+.crave-intro h1 {
+  margin: 0;
+
+  font-family:
+    "DM Serif Display",
+    serif;
+
+  font-size:
+    clamp(
+      48px,
+      5.4vw,
+      78px
+    );
+
+  line-height: 0.82;
+
+  font-weight: 400;
+
+  letter-spacing: -0.07em;
+}
+
+.crave-intro h1 em {
+  color: var(--crave-green-2);
+
+  font-style: italic;
+}
+
+.crave-intro-description {
+  width: 260px;
+
+  margin: 0;
+
+  padding-bottom: 3px;
+
+  font-size: 11px;
+
+  line-height: 1.7;
+
+  text-align: right;
+
+  color:
+    rgba(23, 53, 42, 0.42);
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+.crave-editor {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.12fr)
+    minmax(360px, 0.88fr);
+
+  gap: 15px;
+
+  height:
+    calc(100vh - 202px);
+
+  min-height: 535px;
+
+  max-height: 700px;
+}
+
+
+/* =========================================================
+   DETAILS CARD
+========================================================= */
+
+.crave-details-card {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  padding: 26px 29px;
+
+  border-radius: 30px;
+
+  background: var(--crave-card);
+
+  box-shadow:
+    0 20px 60px
+    rgba(23, 53, 42, 0.07);
+}
+
+
+/* =========================================================
+   CARD HEADING
+========================================================= */
+
+.crave-card-heading {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.crave-section-label {
+  margin-bottom: 5px;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.2em;
+
+  color: var(--crave-orange);
+}
+
+.crave-card-heading h2 {
+  margin: 0;
+
+  font-family:
+    "DM Serif Display",
+    serif;
+
+  font-size: 30px;
+
+  line-height: 1;
+
+  font-weight: 400;
+
+  letter-spacing: -0.05em;
+}
+
+.crave-heading-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  color: var(--crave-green-2);
+
+  background: var(--crave-green-soft);
+}
+
+
+/* =========================================================
+   FIELDS
+========================================================= */
+
+.crave-fields {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+
+  margin-top: 19px;
+}
+
+.crave-field {
+  min-width: 0;
+}
+
+.crave-field-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 5px;
+}
+
+.crave-field-header label {
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.17em;
+
+  text-transform: uppercase;
+
+  color:
+    rgba(23, 53, 42, 0.48);
+}
+
+.crave-field-header label .required {
+  margin-left: 3px;
+
+  color: var(--crave-orange);
+}
+
+.crave-field-header > span {
+  font-size: 8px;
+
+  font-weight: 600;
+
+  color:
+    rgba(23, 53, 42, 0.23);
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.crave-input {
+  display: block;
+
+  width: 100%;
+
+  height: 39px;
+
+  padding:
+    0 13px;
+
+  border:
+    1px solid
+    rgba(23, 53, 42, 0.09);
+
+  border-radius: 13px;
+
+  outline: none;
+
+  background: var(--crave-input);
+
+  color: var(--crave-green);
+
+  font-family:
+    "DM Sans",
+    sans-serif;
+
+  font-size: 11px;
+
+  font-weight: 500;
+
+  transition:
+    border 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+
+.crave-input::placeholder {
+  color:
+    rgba(23, 53, 42, 0.23);
+}
+
+.crave-input:hover {
+  border-color:
+    rgba(23, 53, 42, 0.17);
+}
+
+.crave-input:focus {
+  border-color:
+    rgba(47, 112, 75, 0.45);
+
+  background: var(--crave-card);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(47, 112, 75, 0.06);
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.crave-textarea {
+  height: 79px;
+
+  min-height: 79px;
+
+  padding:
+    10px
+    13px;
+
+  resize: none;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.crave-select-wrapper {
+  position: relative;
+}
+
+.crave-select {
+  appearance: none;
+
+  cursor: pointer;
+
+  padding-right: 35px;
+}
+
+.crave-chevron {
+  position: absolute;
+
+  width: 14px;
+  height: 14px;
+
+  right: 13px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  pointer-events: none;
+
+  color:
+    rgba(23, 53, 42, 0.3);
+}
+
+
+/* =========================================================
+   META GRID
+========================================================= */
+
+.crave-meta-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 9px;
+}
+
+.crave-price-wrapper {
+  position: relative;
+}
+
+.crave-price-wrapper > span {
+  position: absolute;
+
+  left: 12px;
+
+  top: 50%;
+
+  z-index: 2;
+
+  transform:
+    translateY(-50%);
+
+  color:
+    rgba(23, 53, 42, 0.4);
+
+  font-family:
+    "DM Serif Display",
+    serif;
+
+  font-size: 15px;
+}
+
+.crave-price-input {
+  padding-left: 27px;
+}
+
+
+/* =========================================================
+   TAGS
+========================================================= */
+
+.crave-tags {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+}
+
+.crave-tag {
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  padding:
+    0 12px;
+
+  border:
+    1px solid
+    rgba(23, 53, 42, 0.09);
+
+  border-radius: 999px;
+
+  color:
+    rgba(23, 53, 42, 0.52);
+
+  background:
+    #f7f3ea;
+
+  font-family:
+    "DM Sans",
+    sans-serif;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.crave-tag:hover {
+  border-color:
+    rgba(47, 112, 75, 0.3);
+
+  color: var(--crave-green-2);
+}
+
+.crave-tag.selected {
+  border-color:
+    var(--crave-green-2);
+
+  color: white;
+
+  background:
+    var(--crave-green-2);
+}
+
+
+/* =========================================================
+   MEDIA CARD
+========================================================= */
+
+.crave-media-card {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  padding: 25px;
+
+  border-radius: 30px;
+
+  color: white;
+
+  background:
+    var(--crave-green);
+
+  box-shadow:
+    0 20px 60px
+    rgba(23, 53, 42, 0.16);
+}
+
+
+/* =========================================================
+   MEDIA HEADING
+========================================================= */
+
+.crave-media-heading {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+}
+
+.crave-media-label {
+  margin-bottom: 5px;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.2em;
+
+  color: var(--crave-orange-soft);
+}
+
+.crave-media-heading h2 {
+  margin: 0;
+
+  font-family:
+    "DM Serif Display",
+    serif;
+
+  font-size: 29px;
+
+  line-height: 0.91;
+
+  font-weight: 400;
+
+  letter-spacing: -0.045em;
+}
+
+.crave-media-icon {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.09);
+}
+
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+
+.crave-upload-container {
+  margin-top: 15px;
+}
+
+.crave-upload {
+  position: relative;
+
+  height: 275px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  border-radius: 23px;
+
+  cursor: pointer;
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  transition:
+    background 0.25s,
+    border 0.25s;
+}
+
+.crave-upload:hover {
+  background:
+    rgba(255, 255, 255, 0.085);
+
+  border-color:
+    rgba(255, 255, 255, 0.2);
+}
+
+.crave-upload.drag-active {
+  border-color:
+    var(--crave-orange-soft);
+
+  background:
+    rgba(242, 160, 94, 0.1);
+}
+
+
+/* =========================================================
+   UPLOAD GLOWS
+========================================================= */
+
+.crave-upload-glow {
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  border-radius: 50%;
+
+  filter: blur(55px);
+
+  pointer-events: none;
+}
+
+.crave-upload-glow.green {
+  left: -70px;
+  bottom: -80px;
+
+  background:
+    rgba(47, 112, 75, 0.5);
+}
+
+.crave-upload-glow.orange {
+  right: -80px;
+  top: 30px;
+
+  background:
+    rgba(232, 109, 50, 0.2);
+}
+
+
+/* =========================================================
+   UPLOAD ICON
+========================================================= */
+
+.crave-upload-icon {
+  position: relative;
+
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: var(--crave-green);
+
+  background: var(--crave-bg);
+
+  box-shadow:
+    0 12px 35px
+    rgba(0, 0, 0, 0.15);
+
+  transition:
+    transform 0.35s;
+}
+
+.crave-upload:hover .crave-upload-icon {
+  transform: scale(1.08);
+}
+
+
+/* =========================================================
+   UPLOAD TEXT
+========================================================= */
+
+.crave-upload h3 {
+  position: relative;
+
+  margin:
+    13px 0 0;
+
+  font-family:
+    "DM Serif Display",
+    serif;
+
+  font-size: 21px;
+
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+.crave-upload p {
+  position: relative;
+
+  margin:
+    7px 0 0;
+
+  color:
+    rgba(255, 255, 255, 0.4);
+
+  font-size: 9px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   FILE BADGES
+========================================================= */
+
+.crave-file-badges {
+  position: relative;
+
+  display: flex;
+
+  gap: 5px;
+
+  margin-top: 13px;
+}
+
+.crave-file-badge {
+  padding:
+    5px
+    9px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  border-radius: 999px;
+
+  color:
+    rgba(255, 255, 255, 0.42);
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.12em;
+}
+
+.crave-file-limit {
+  position: relative;
+
+  margin-top: 11px;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+
+  color:
+    rgba(255, 255, 255, 0.2);
+}
+
+.hidden-input {
+  display: none;
+}
+
+
+/* =========================================================
+   CHECKLIST
+========================================================= */
+
+.crave-checklist {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 6px;
+
+  margin-top: 7px;
+}
+
+.crave-check {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  min-width: 0;
+
+  padding:
+    7px
+    8px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+}
+
+.crave-check-circle {
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  color:
+    rgba(255, 255, 255, 0.2);
+
+  background:
+    rgba(255, 255, 255, 0.07);
+
+  font-size: 8px;
+}
+
+.crave-check-circle.done {
+  color: var(--crave-green);
+
+  background: var(--crave-green-soft);
+}
+
+.crave-check span {
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+
+  color:
+    rgba(255, 255, 255, 0.38);
+}
+
+
+/* =========================================================
+   VIDEO PREVIEW
+========================================================= */
+
+.crave-video-preview {
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.1);
+
+  border-radius: 23px;
+
+  background: #000;
+}
+
+.crave-video-wrapper {
+  position: relative;
+
+  height: 275px;
+
+  background: #000;
+}
+
+.crave-video-wrapper video {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+}
+
+.crave-change-button {
+  position: absolute;
+
+  top: 10px;
+  right: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding:
+    7px
+    10px;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  color: white;
+
+  background:
+    rgba(0, 0, 0, 0.7);
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(10px);
+}
+
+.crave-video-info {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding:
+    10px;
+
+  color: var(--crave-green);
+
+  background:
+    var(--crave-bg);
+}
+
+.crave-video-info-icon {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  color: white;
+
+  background:
+    var(--crave-green);
+}
+
+.crave-video-file {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.crave-video-file p {
+  overflow: hidden;
+
+  margin: 0;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+
+  font-size: 9px;
+
+  font-weight: 700;
+}
+
+.crave-video-file span {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 7px;
+
+  color:
+    rgba(23, 53, 42, 0.4);
+}
+
+.crave-ready {
+  padding:
+    5px
+    7px;
+
+  border-radius: 999px;
+
+  color: var(--crave-green-2);
+
+  background: var(--crave-green-soft);
+
+  font-size: 6px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.1em;
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.crave-message {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 7px;
+
+  padding:
+    8px
+    10px;
+
+  border-radius: 11px;
+
+  font-size: 8px;
+
+  line-height: 1.4;
+}
+
+.crave-message.error {
+  color: #ffd9d9;
+
+  background:
+    rgba(239, 68, 68, 0.1);
+
+  border:
+    1px solid
+    rgba(239, 68, 68, 0.15);
+}
+
+.crave-message.success {
+  color: #d8f4df;
+
+  background:
+    rgba(52, 211, 153, 0.08);
+
+  border:
+    1px solid
+    rgba(52, 211, 153, 0.14);
+}
+
+.crave-message-icon {
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.1);
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+.crave-message p {
+  margin: 0;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.crave-progress {
+  margin-top: 8px;
+}
+
+.crave-progress-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 4px;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.12em;
+}
+
+.crave-progress-header span {
+  color:
+    rgba(255, 255, 255, 0.35);
+}
+
+.crave-progress-header strong {
+  color: white;
+}
+
+.crave-progress-track {
+  height: 3px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, 0.1);
+}
+
+.crave-progress-bar {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    var(--crave-orange-soft);
+
+  transition: width 0.3s ease;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.crave-actions {
+  margin-top: 9px;
+}
+
+.crave-publish-button {
+  width: 100%;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  color: var(--crave-green);
+
+  background:
+    var(--crave-orange-soft);
+
+  font-family:
+    "DM Sans",
+    sans-serif;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.crave-publish-button:hover {
+  background: #ffb978;
+
+  box-shadow:
+    0 10px 30px
+    rgba(242, 160, 94, 0.2);
+
+  transform: translateY(-1px);
+}
+
+.crave-publish-button:active {
+  transform: scale(0.99);
+}
+
+.crave-publish-button:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+.crave-publish-button .arrow {
+  font-size: 15px;
+
+  transition:
+    transform 0.2s;
+}
+
+.crave-publish-button:hover .arrow {
+  transform: translateX(3px);
+}
+
+.crave-clear-button {
+  width: 100%;
+
+  height: 28px;
+
+  margin-top: 3px;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    rgba(255, 255, 255, 0.3);
+
+  font-family:
+    "DM Sans",
+    sans-serif;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.14em;
+
+  cursor: pointer;
+
+  transition: color 0.2s;
+}
+
+.crave-clear-button:hover {
+  color:
+    rgba(255, 255, 255, 0.65);
+}
+
+.crave-clear-button:disabled {
+  opacity: 0.3;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SPINNER
+========================================================= */
+
+.crave-spinner {
+  width: 13px;
+  height: 13px;
+
+  border:
+    2px solid
+    rgba(23, 53, 42, 0.25);
+
+  border-top-color:
+    var(--crave-green);
+
+  border-radius: 50%;
+
+  animation:
+    crave-spin 0.7s linear infinite;
+}
+
+@keyframes crave-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.crave-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding:
+    8px
+    2px
+    0;
+
+  color:
+    rgba(23, 53, 42, 0.28);
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.12em;
+}
+
+.crave-footer div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+  .crave-editor {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(320px, 0.8fr);
+
+    gap: 12px;
+  }
+
+  .crave-details-card {
+    padding:
+      22px;
+  }
+
+  .crave-media-card {
+    padding:
+      21px;
+  }
+
+  .crave-intro h1 {
+    font-size: 55px;
+  }
+
+  .crave-upload,
+  .crave-video-wrapper {
+    height: 250px;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+
+  .crave-page {
+    min-height: 100vh;
+
+    overflow-y: auto;
+  }
+
+  .crave-editor {
+    height: auto;
+
+    min-height: 0;
+
+    max-height: none;
+
+    grid-template-columns: 1fr;
+  }
+
+  .crave-media-card {
+    position: relative;
+
+    top: auto;
+  }
+
+  .crave-upload,
+  .crave-video-wrapper {
+    height: 280px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .crave-header {
+    padding:
+      9px
+      10px
+      0;
+  }
+
+  .crave-nav {
+    height: 52px;
+
+    padding:
+      0 13px;
+  }
+
+  .crave-nav-links {
+    display: none;
+  }
+
+  .crave-logo-text {
+    font-size: 19px;
+  }
+
+  .crave-logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .crave-back-button {
+    padding:
+      8px
+      12px;
+
+    font-size: 9px;
+  }
+
+  .crave-container {
+    padding:
+      20px
+      10px
+      25px;
+  }
+
+  .crave-intro {
+    padding:
+      7px
+      3px
+      20px;
+  }
+
+  .crave-intro h1 {
+    font-size: 47px;
+  }
+
+  .crave-intro-description {
+    display: none;
+  }
+
+  .crave-details-card,
+  .crave-media-card {
+    padding:
+      20px;
+
+    border-radius: 25px;
+  }
+
+  .crave-card-heading h2,
+  .crave-media-heading h2 {
+    font-size: 27px;
+  }
+
+  .crave-meta-grid {
+    grid-template-columns:
+      repeat(3, 1fr);
+
+    gap: 6px;
+  }
+
+  .crave-input {
+    height: 42px;
+  }
+
+  .crave-upload,
+  .crave-video-wrapper {
+    height: 260px;
+  }
+
+  .crave-footer {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 7px;
+
+    padding-bottom: 5px;
+  }
+
+}

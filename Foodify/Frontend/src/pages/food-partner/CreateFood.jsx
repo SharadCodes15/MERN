@@ -1,56 +1,86 @@
 ﻿import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const initialFormState = {
   name: "",
   description: "",
-  category: "",
-  price: "",
-  prepTime: "",
-  servings: "1",
 };
 
-const categories = [
-  "Main Course",
-  "Starter",
-  "Burger",
-  "Pizza",
-  "Biryani",
-  "Dessert",
-  "Beverage",
-  "Street Food",
-  "Other",
+const popularFoods = [
+  {
+    id: 1,
+    name: "Signature Burger",
+    category: "Burgers",
+    price: "₹249",
+    rating: "4.9",
+    image: "/Images/burger.png",
+  },
+  {
+    id: 2,
+    name: "Chicken Biryani",
+    category: "Indian",
+    price: "₹299",
+    rating: "4.8",
+    image: "/Images/biryani.png",
+  },
+  {
+    id: 3,
+    name: "Crispy Roll",
+    category: "Street Food",
+    price: "₹149",
+    rating: "4.7",
+    image: "/Images/roll.png",
+  },
+  {
+    id: 4,
+    name: "Spicy Ramen",
+    category: "Asian",
+    price: "₹279",
+    rating: "4.9",
+    image: "/Images/ramen.png",
+  },
 ];
 
-const dietaryOptions = [
-  "Vegetarian",
-  "Vegan",
-  "Eggless",
-  "Gluten Free",
-  "Spicy",
+const restaurants = [
+  {
+    id: 1,
+    name: "Your Kitchen",
+    category: "Independent Kitchen",
+    image: "/Images/rollhand.jpg",
+  },
+  {
+    id: 2,
+    name: "CRAVE Partner",
+    category: "Food & Dining",
+    image: "/Images/burger.png",
+  },
+  {
+    id: 3,
+    name: "Kitchen Atelier",
+    category: "Artisan Food",
+    image: "/Images/biryani.png",
+  },
 ];
 
 export default function CreateFood() {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const dropZoneRef = useRef(null);
 
   const [formData, setFormData] = useState(initialFormState);
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
 
-  const [selectedDietary, setSelectedDietary] = useState([]);
-  const [dragActive, setDragActive] = useState(false);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  /* =========================================================
+  const [activeNav, setActiveNav] = useState("home");
+
+  /* =========================
      INPUT
-  ========================================================= */
+  ========================= */
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,23 +93,13 @@ export default function CreateFood() {
     setError("");
   };
 
-  /* =========================================================
-     DIETARY OPTIONS
-  ========================================================= */
-
-  const toggleDietary = (item) => {
-    setSelectedDietary((prev) =>
-      prev.includes(item)
-        ? prev.filter((value) => value !== item)
-        : [...prev, item]
-    );
-  };
-
-  /* =========================================================
+  /* =========================
      VIDEO
-  ========================================================= */
+  ========================= */
 
-  const processVideo = (file) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+
     if (!file) return;
 
     if (!file.type.startsWith("video/")) {
@@ -87,10 +107,9 @@ export default function CreateFood() {
       return;
     }
 
-    const maxSize = 50 * 1024 * 1024;
-
-    if (file.size > maxSize) {
-      setError("Video must be smaller than 50MB.");
+    // 50 MB warning
+    if (file.size > 50 * 1024 * 1024) {
+      setError("Video is larger than 50MB. Please choose a smaller file.");
       return;
     }
 
@@ -98,37 +117,9 @@ export default function CreateFood() {
       URL.revokeObjectURL(videoPreview);
     }
 
-    const preview = URL.createObjectURL(file);
-
     setVideoFile(file);
-    setVideoPreview(preview);
+    setVideoPreview(URL.createObjectURL(file));
     setError("");
-    setUploadProgress(0);
-  };
-
-  const handleFileChange = (e) => {
-    processVideo(e.target.files?.[0]);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragActive(false);
-
-    const file = e.dataTransfer.files?.[0];
-
-    if (file) {
-      processVideo(file);
-    }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setDragActive(true);
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setDragActive(false);
   };
 
   const handleRemoveVideo = () => {
@@ -138,16 +129,15 @@ export default function CreateFood() {
 
     setVideoFile(null);
     setVideoPreview(null);
-    setUploadProgress(0);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  /* =========================================================
-     CLEANUP
-  ========================================================= */
+  /* =========================
+     CLEANUP VIDEO URL
+  ========================= */
 
   useEffect(() => {
     return () => {
@@ -157,27 +147,22 @@ export default function CreateFood() {
     };
   }, [videoPreview]);
 
-  /* =========================================================
-     RESET
-  ========================================================= */
+  /* =========================
+     RESET FORM
+  ========================= */
 
   const resetForm = () => {
     setFormData(initialFormState);
-    setSelectedDietary([]);
     handleRemoveVideo();
     setError("");
-    setSuccess("");
   };
 
-  /* =========================================================
-     SUBMIT
-  ========================================================= */
+  /* =========================
+     SUBMIT FOOD
+  ========================= */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setError("");
-    setSuccess("");
 
     if (!formData.name.trim()) {
       setError("Please enter a dish name.");
@@ -185,23 +170,21 @@ export default function CreateFood() {
     }
 
     if (!formData.description.trim()) {
-      setError("Please add a description for your dish.");
+      setError("Please enter a dish description.");
       return;
     }
 
     if (!videoFile) {
-      setError("Please upload a preparation or plating video.");
+      setError("Please upload a video of the dish preparation or plating.");
       return;
     }
 
     setIsSubmitting(true);
-    setUploadProgress(0);
+    setError("");
+    setSuccess("");
 
     const data = new FormData();
 
-    /*
-      These are the fields your current backend already supports.
-    */
     data.append("name", formData.name.trim());
     data.append("description", formData.description.trim());
     data.append("video", videoFile);
@@ -212,30 +195,21 @@ export default function CreateFood() {
         data,
         {
           withCredentials: true,
-
-          // Don't manually set Content-Type.
-          // Axios will automatically add the multipart boundary.
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percent = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-
-              setUploadProgress(percent);
-            }
-          },
         }
       );
 
       console.log("Food created:", response.data);
 
-      setSuccess("Your dish has been published successfully.");
+      setSuccess("Dish published successfully.");
+
+      resetForm();
 
       setTimeout(() => {
-        resetForm();
+        setShowCreateForm(false);
+        setSuccess("");
       }, 1200);
     } catch (err) {
-      console.error("Failed to add food:", err);
+      console.error("Failed to add food item:", err);
 
       setError(
         err.response?.data?.message ||
@@ -246,406 +220,482 @@ export default function CreateFood() {
     }
   };
 
+  /* =========================
+     NAVIGATION
+  ========================= */
+
+  const handleNavClick = (item) => {
+    setActiveNav(item);
+
+    if (item === "home") {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+
+    if (item === "menu") {
+      document
+        .getElementById("popular-food")
+        ?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    if (item === "create") {
+      setShowCreateForm(true);
+    }
+  };
+
   return (
-    <main className="min-h-screen bg-[#f5f3f0] text-[#171717]">
+    <div className="min-h-screen bg-[#eef0ff] font-sans text-[#29234f]">
+      <div className="mx-auto flex min-h-screen max-w-[1500px]">
 
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
+        {/* =====================================================
+            SIDEBAR
+        ===================================================== */}
 
-      <header className="sticky top-0 z-40 border-b border-black/10 bg-[#f5f3f0]/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-4 sm:px-6">
+        <aside className="hidden w-[105px] shrink-0 flex-col items-center justify-between bg-[#2d2362] py-7 text-white lg:flex">
+          <div className="flex flex-col items-center">
 
-          <div className="flex items-center gap-4">
-
+            {/* Logo */}
             <Link
               to="/"
-              className="text-2xl font-black tracking-[-0.07em]"
+              className="mb-14 text-xl font-black tracking-[-0.08em]"
             >
-              CRAVE<span className="text-orange-500">.</span>
+              C<span className="text-orange-400">.</span>
             </Link>
 
-            <span className="hidden h-5 w-px bg-black/10 sm:block" />
+            {/* Navigation */}
+            <nav className="flex flex-col items-center gap-7">
 
-            <div className="hidden sm:block">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/35">
-                Partner Portal
-              </p>
+              <SidebarButton
+                active={activeNav === "home"}
+                onClick={() => handleNavClick("home")}
+                icon={<HomeIcon />}
+              />
 
-              <p className="text-xs font-semibold text-black/70">
-                Menu Desk
-              </p>
-            </div>
+              <SidebarButton
+                active={activeNav === "menu"}
+                onClick={() => handleNavClick("menu")}
+                icon={<MenuIcon />}
+              />
+
+              <SidebarButton
+                active={activeNav === "orders"}
+                onClick={() => handleNavClick("orders")}
+                icon={<BagIcon />}
+              />
+
+              <SidebarButton
+                active={activeNav === "favorites"}
+                onClick={() => handleNavClick("favorites")}
+                icon={<HeartIcon />}
+              />
+
+              <SidebarButton
+                active={activeNav === "messages"}
+                onClick={() => handleNavClick("messages")}
+                icon={<MessageIcon />}
+              />
+
+              <SidebarButton
+                active={activeNav === "settings"}
+                onClick={() => handleNavClick("settings")}
+                icon={<SettingsIcon />}
+              />
+            </nav>
           </div>
 
-          <Link
-            to="/"
-            className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-bold text-black/60 transition hover:border-black/20 hover:text-black"
+          {/* Logout */}
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-white/50 transition hover:bg-white/10 hover:text-white"
+            title="Exit"
           >
-            <ArrowLeftIcon />
-            Exit
-          </Link>
-        </div>
-      </header>
+            <LogoutIcon />
+          </button>
+        </aside>
 
-      {/* =====================================================
-          PAGE
-      ===================================================== */}
+        {/* =====================================================
+            MAIN CONTENT
+        ===================================================== */}
 
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:py-14">
+        <main className="min-w-0 flex-1 px-4 py-5 sm:px-6 lg:px-8 xl:px-10">
 
-        {/* ===================================================
-            PAGE HEADER
-        =================================================== */}
+          {/* TOP BAR */}
+          <header className="mb-7 flex items-center justify-between gap-4">
 
-        <div className="mb-9 max-w-2xl">
+            {/* Search */}
+            <div className="relative w-full max-w-[360px]">
+              <SearchIcon />
 
-          <div className="mb-4 flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black text-[10px] font-black text-white">
-              01
-            </span>
+              <input
+                type="text"
+                placeholder="Search food name / restaurant"
+                className="h-11 w-full rounded-full border-0 bg-white/70 pl-11 pr-4 text-sm text-black outline-none placeholder:text-[#817e9c] shadow-sm transition focus:bg-white focus:ring-2 focus:ring-[#2d2362]/10"
+              />
+            </div>
 
-            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-black/40">
-              Menu creation
-            </span>
-          </div>
-
-          <h1 className="text-4xl font-black tracking-[-0.05em] sm:text-5xl">
-            Publish a dish.
-          </h1>
-
-          <p className="mt-3 max-w-xl text-sm leading-6 text-black/45">
-            Give customers a reason to crave it. Add your dish details and a
-            short kitchen or plating video.
-          </p>
-        </div>
-
-        {/* ===================================================
-            PROGRESS
-        =================================================== */}
-
-        <div className="mb-8 flex max-w-2xl items-center">
-
-          <ProgressStep
-            number="01"
-            label="Details"
-            active
-          />
-
-          <div className="h-px flex-1 bg-black/10" />
-
-          <ProgressStep
-            number="02"
-            label="Media"
-            active={!!videoFile}
-          />
-
-          <div className="h-px flex-1 bg-black/10" />
-
-          <ProgressStep
-            number="03"
-            label="Publish"
-          />
-        </div>
-
-        {/* ===================================================
-            CONTENT GRID
-        =================================================== */}
-
-        <form
-          onSubmit={handleSubmit}
-          className="grid gap-6 lg:grid-cols-[1fr_390px]"
-        >
-
-          {/* =================================================
-              LEFT — DETAILS
-          ================================================= */}
-
-          <section className="rounded-[28px] border border-black/10 bg-white p-5 shadow-[0_15px_50px_rgba(0,0,0,0.05)] sm:p-7">
-
-            <SectionHeader
-              icon={<InfoIcon />}
-              eyebrow="Dish information"
-              title="Tell us about the dish"
-              description="Keep it clear, appetising and easy to understand."
-            />
-
-            <div className="mt-8 space-y-6">
-
-              {/* Dish name */}
-              <Field
-                label="Dish name"
-                required
-                hint={`${formData.name.length}/60`}
-              >
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  maxLength={60}
-                  placeholder="e.g. Smoky Chicken Biryani"
-                  className="input"
-                  required
-                />
-              </Field>
-
-              {/* Description */}
-              <Field
-                label="Description"
-                required
-                hint={`${formData.description.length}/300`}
-              >
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  maxLength={300}
-                  rows={5}
-                  placeholder="Describe the flavour, key ingredients and what makes this dish special..."
-                  className="input resize-none leading-6"
-                  required
-                />
-              </Field>
-
-              {/* Category */}
-              <Field
-                label="Category"
-                hint="Optional"
-              >
-                <div className="relative">
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    className="input appearance-none pr-10"
-                  >
-                    <option value="">Select a category</option>
-
-                    {categories.map((category) => (
-                      <option
-                        key={category}
-                        value={category}
-                      >
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-
-                  <ChevronDownIcon />
-                </div>
-              </Field>
-
-              {/* Pricing */}
-              <div className="grid gap-4 sm:grid-cols-3">
-
-                <Field label="Price" hint="Optional">
-                  <div className="relative">
-                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-black/35">
-                      ₹
-                    </span>
-
-                    <input
-                      type="number"
-                      name="price"
-                      value={formData.price}
-                      onChange={handleInputChange}
-                      placeholder="249"
-                      min="0"
-                      className="input pl-9"
-                    />
-                  </div>
-                </Field>
-
-                <Field label="Prep time" hint="Optional">
-                  <div className="relative">
-                    <input
-                      type="number"
-                      name="prepTime"
-                      value={formData.prepTime}
-                      onChange={handleInputChange}
-                      placeholder="20"
-                      min="0"
-                      className="input pr-14"
-                    />
-
-                    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase text-black/30">
-                      min
-                    </span>
-                  </div>
-                </Field>
-
-                <Field label="Serves" hint="Optional">
-                  <input
-                    type="number"
-                    name="servings"
-                    value={formData.servings}
-                    onChange={handleInputChange}
-                    min="1"
-                    max="20"
-                    className="input"
-                  />
-                </Field>
-
+            {/* User */}
+            <div className="flex shrink-0 items-center gap-3">
+              <div className="hidden text-right sm:block">
+                <p className="text-xs font-bold text-[#29234f]">
+                  Food Partner
+                </p>
+                <p className="text-[10px] text-[#817e9c]">
+                  Kitchen account
+                </p>
               </div>
 
-              {/* Dietary */}
-              <Field
-                label="Food tags"
-                hint="Optional"
-              >
-                <div className="flex flex-wrap gap-2">
-
-                  {dietaryOptions.map((item) => {
-                    const selected = selectedDietary.includes(item);
-
-                    return (
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() => toggleDietary(item)}
-                        className={`rounded-full border px-4 py-2 text-xs font-bold transition ${
-                          selected
-                            ? "border-black bg-black text-white"
-                            : "border-black/10 bg-[#f8f7f5] text-black/50 hover:border-black/25 hover:text-black"
-                        }`}
-                      >
-                        {selected && (
-                          <span className="mr-1.5">✓</span>
-                        )}
-
-                        {item}
-                      </button>
-                    );
-                  })}
-
-                </div>
-              </Field>
-
+              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[#2d2362] text-sm font-bold text-white">
+                F
+              </div>
             </div>
-          </section>
+          </header>
 
-          {/* =================================================
-              RIGHT — VIDEO
-          ================================================= */}
+          {/* =====================================================
+              DASHBOARD CONTENT
+          ===================================================== */}
 
-          <section className="h-fit rounded-[28px] border border-black/10 bg-white p-5 shadow-[0_15px_50px_rgba(0,0,0,0.05)] sm:p-7">
+          <section className="mx-auto max-w-[1120px]">
 
-            <SectionHeader
-              icon={<VideoIcon />}
-              eyebrow="Required media"
-              title="Show the craving."
-              description="A short preparation or plating video helps customers discover your dish."
-            />
+            {/* DATE / WELCOME */}
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-[#817e9c]">
+                  PARTNER DASHBOARD
+                </p>
 
-            <div className="mt-7">
+                <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#29234f] sm:text-3xl">
+                  Good food starts here.
+                </h1>
+              </div>
 
-              {!videoPreview ? (
-                <label
-                  ref={dropZoneRef}
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  className={`group flex min-h-[330px] cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed px-6 text-center transition ${
-                    dragActive
-                      ? "border-orange-500 bg-orange-50"
-                      : "border-black/10 bg-[#faf9f7] hover:border-black/25 hover:bg-[#f7f5f2]"
-                  }`}
-                >
+              <p className="hidden text-xs font-semibold text-[#514c70] sm:block">
+                {new Date().toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
 
-                  <div
-                    className={`mb-5 flex h-16 w-16 items-center justify-center rounded-2xl transition ${
-                      dragActive
-                        ? "bg-orange-500 text-white"
-                        : "bg-black text-white group-hover:scale-105"
-                    }`}
-                  >
-                    <UploadIcon />
-                  </div>
+            {/* =================================================
+                PROMOTIONAL BANNER
+            ================================================= */}
 
-                  <h3 className="text-sm font-black">
-                    {dragActive
-                      ? "Drop your video here"
-                      : "Upload your kitchen reel"}
-                  </h3>
+            <section className="relative mb-9 min-h-[150px] overflow-hidden rounded-[26px] bg-[#dbe5ff] px-6 py-7 shadow-sm sm:px-8">
 
-                  <p className="mt-2 max-w-[230px] text-xs leading-5 text-black/40">
-                    Drag and drop your video here, or click to browse files.
-                  </p>
+              <div className="relative z-10 max-w-[520px]">
+                <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-[#716b92]">
+                  CRAVE Partner
+                </p>
 
-                  <div className="mt-5 flex flex-wrap justify-center gap-2">
-                    <UploadBadge>
-                      <FileIcon />
-                      MP4
-                    </UploadBadge>
+                <h2 className="text-2xl font-bold leading-tight text-[#29234f] sm:text-3xl">
+                  Turn your best dishes
+                  <br />
+                  into everyone's craving.
+                </h2>
 
-                    <UploadBadge>
-                      <FileIcon />
-                      WebM
-                    </UploadBadge>
+                <p className="mt-2 max-w-md text-xs leading-5 text-[#716b92]">
+                  Publish dishes, share your kitchen story and reach customers
+                  looking for something worth ordering.
+                </p>
+              </div>
 
-                    <UploadBadge>
-                      <FileIcon />
-                      MOV
-                    </UploadBadge>
-                  </div>
-
-                  <p className="mt-5 text-[10px] font-semibold text-black/25">
-                    Maximum recommended size · 50MB
-                  </p>
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="video/mp4,video/webm,video/quicktime,video/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </label>
-              ) : (
-                <VideoPreview
-                  videoFile={videoFile}
-                  videoPreview={videoPreview}
-                  onRemove={handleRemoveVideo}
-                  disabled={isSubmitting}
+              {/* Decorative food */}
+              <div className="pointer-events-none absolute -right-5 -top-5 hidden h-44 w-44 rotate-6 rounded-full bg-white/50 sm:block">
+                <img
+                  src="/Images/burger.png"
+                  alt=""
+                  className="absolute inset-3 h-[90%] w-[90%] object-contain drop-shadow-xl"
                 />
-              )}
+              </div>
+
+              <div className="pointer-events-none absolute -bottom-10 right-24 hidden h-24 w-24 rounded-full bg-[#f9c2ae]/70 md:block" />
+            </section>
+
+            {/* =================================================
+                POPULAR FOOD
+            ================================================= */}
+
+            <section id="popular-food" className="mb-10">
+
+              <div className="mb-4 flex items-end justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8c88a3]">
+                    Your menu
+                  </p>
+
+                  <h2 className="mt-1 text-xl font-bold text-[#29234f]">
+                    Popular this week
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavClick("create")}
+                  className="flex items-center gap-2 text-xs font-bold text-[#514b75] transition hover:text-[#2d2362]"
+                >
+                  Add dish
+                  <span className="text-base">+</span>
+                </button>
+              </div>
+
+              <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-none">
+
+                {popularFoods.map((food) => (
+                  <FoodCard
+                    key={food.id}
+                    food={food}
+                  />
+                ))}
+
+                {/* Add card */}
+                <button
+                  type="button"
+                  onClick={() => setShowCreateForm(true)}
+                  className="flex h-[185px] w-[145px] shrink-0 flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-[#b9b5ce] bg-white/30 text-[#817d9d] transition hover:border-[#2d2362] hover:bg-white/70 hover:text-[#2d2362]"
+                >
+                  <span className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow-sm">
+                    +
+                  </span>
+
+                  <span className="text-xs font-bold">
+                    Add new dish
+                  </span>
+                </button>
+              </div>
+            </section>
+
+            {/* =================================================
+                RESTAURANTS / KITCHEN
+            ================================================= */}
+
+            <section className="mb-8">
+
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8c88a3]">
+                    Partner profile
+                  </p>
+
+                  <h2 className="mt-1 text-xl font-bold text-[#29234f]">
+                    Your kitchen
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  className="text-xs font-bold text-[#514b75] hover:text-[#2d2362]"
+                >
+                  View profile
+                </button>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                {restaurants.map((restaurant) => (
+                  <div
+                    key={restaurant.id}
+                    className="flex items-center gap-3 rounded-[18px] bg-white/75 p-3 shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
+                  >
+                    <img
+                      src={restaurant.image}
+                      alt={restaurant.name}
+                      className="h-14 w-14 rounded-xl object-cover"
+                    />
+
+                    <div className="min-w-0">
+                      <h3 className="truncate text-xs font-bold text-[#29234f]">
+                        {restaurant.name}
+                      </h3>
+
+                      <p className="mt-1 truncate text-[10px] text-[#8a86a1]">
+                        {restaurant.category}
+                      </p>
+
+                      <div className="mt-1 text-[10px] text-[#e0a529]">
+                        ★★★★★
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+          </section>
+        </main>
+
+        {/* =====================================================
+            RIGHT ORDER / PARTNER PANEL
+        ===================================================== */}
+
+        <aside className="hidden w-[300px] shrink-0 bg-white/80 px-7 py-8 xl:block">
+
+          <div className="mb-8 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2d2362] text-xs font-bold text-white">
+              K
             </div>
 
-            {/* Requirements */}
-            <div className="mt-6 rounded-2xl bg-[#f8f7f5] p-4">
-
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-black/40">
-                Video checklist
+            <div>
+              <p className="text-xs font-bold text-[#29234f]">
+                Kitchen Atelier
               </p>
 
-              <div className="space-y-2">
+              <p className="text-[10px] text-[#8a86a1]">
+                Verified food partner
+              </p>
+            </div>
+          </div>
 
-                <ChecklistItem
-                  done={!!videoFile}
-                  text="Dish preparation or plating"
-                />
-
-                <ChecklistItem
-                  done={!!videoFile}
-                  text="Clear and well-lit footage"
-                />
-
-                <ChecklistItem
-                  done={!!videoFile}
-                  text="Under 50MB recommended"
-                />
-
+          {/* Orders */}
+          <div className="mb-9">
+            <div className="mb-5 flex items-end justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-[#29234f]">
+                  Today's
+                  <br />
+                  orders
+                </h2>
               </div>
+
+              <span className="rounded-full bg-[#f0ecff] px-3 py-1 text-[10px] font-bold text-[#514b75]">
+                8 orders
+              </span>
+            </div>
+
+            <div className="space-y-4">
+
+              <OrderRow
+                name="Chicken Biryani"
+                qty="× 2"
+                price="₹598"
+                image="/Images/biryani.png"
+              />
+
+              <OrderRow
+                name="Signature Burger"
+                qty="× 1"
+                price="₹249"
+                image="/Images/burger.png"
+              />
+
+              <OrderRow
+                name="Crispy Roll"
+                qty="× 3"
+                price="₹447"
+                image="/Images/roll.png"
+              />
+
+              <OrderRow
+                name="Spicy Ramen"
+                qty="× 1"
+                price="₹279"
+                image="/Images/ramen.png"
+              />
+
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-dashed border-[#d9d6e4]" />
+
+          {/* Stats */}
+          <div className="py-7">
+            <h3 className="text-xl font-bold text-[#29234f]">
+              Kitchen
+              <br />
+              overview
+            </h3>
+
+            <div className="mt-5 space-y-4">
+
+              <StatRow
+                label="Published dishes"
+                value="12"
+              />
+
+              <StatRow
+                label="Orders today"
+                value="08"
+              />
+
+              <StatRow
+                label="Rating"
+                value="4.9 ★"
+              />
+
+              <StatRow
+                label="Status"
+                value="Open"
+                green
+              />
+
+            </div>
+          </div>
+
+          {/* CTA */}
+          <button
+            type="button"
+            onClick={() => setShowCreateForm(true)}
+            className="group flex w-full items-center justify-center gap-3 rounded-full bg-[#2d2362] py-4 text-sm font-bold text-white shadow-lg shadow-[#2d2362]/15 transition hover:bg-[#3c2e7d]"
+          >
+            Publish a dish
+            <span className="transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </button>
+        </aside>
+      </div>
+
+      {/* =========================================================
+          CREATE FOOD MODAL
+      ========================================================= */}
+
+      {showCreateForm && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#17142c]/50 p-4 backdrop-blur-sm"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !isSubmitting) {
+              setShowCreateForm(false);
+              resetForm();
+            }
+          }}
+        >
+          <div className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-[28px] bg-[#f9f8ff] p-5 shadow-2xl sm:p-7">
+
+            {/* Modal Header */}
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8a86a1]">
+                  Menu Desk
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#29234f]">
+                  Publish new dish
+                </h2>
+
+                <p className="mt-1 text-xs text-[#817d99]">
+                  Add your dish and show customers how it is made.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={() => {
+                  setShowCreateForm(false);
+                  resetForm();
+                }}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eceaf5] text-[#514d6d] transition hover:bg-[#dedbea]"
+              >
+                ×
+              </button>
             </div>
 
             {/* Error */}
             {error && (
-              <div className="mt-5 flex gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs text-red-600">
-                  !
-                </div>
-
+              <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
                 <p className="text-xs font-semibold leading-5 text-red-700">
                   {error}
                 </p>
@@ -654,319 +704,342 @@ export default function CreateFood() {
 
             {/* Success */}
             {success && (
-              <div className="mt-5 flex gap-3 rounded-2xl border border-green-200 bg-green-50 p-4">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs text-green-600">
-                  ✓
-                </div>
-
-                <p className="text-xs font-semibold leading-5 text-green-700">
-                  {success}
+              <div className="mb-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3">
+                <p className="text-xs font-semibold text-green-700">
+                  ✓ {success}
                 </p>
               </div>
             )}
 
-            {/* Upload progress */}
-            {isSubmitting && (
-              <div className="mt-5">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-5"
+            >
 
-                <div className="mb-2 flex justify-between text-[10px] font-bold">
-                  <span className="text-black/40">
-                    Uploading video
-                  </span>
+              {/* Name */}
+              <div>
+                <label
+                  htmlFor="name"
+                  className="mb-2 block text-[10px] font-black uppercase tracking-[0.15em] text-[#68647e]"
+                >
+                  Dish Name
+                </label>
 
-                  <span className="text-black">
-                    {uploadProgress}%
-                  </span>
-                </div>
-
-                <div className="h-1.5 overflow-hidden rounded-full bg-black/10">
-                  <div
-                    className="h-full rounded-full bg-orange-500 transition-all duration-300"
-                    style={{
-                      width: `${uploadProgress}%`,
-                    }}
-                  />
-                </div>
+                <input
+                  id="name"
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="e.g. Signature Chicken Biryani"
+                  required
+                  className="w-full rounded-xl border border-[#dedbe8] bg-white px-4 py-3.5 text-sm font-medium text-black outline-none placeholder:text-black/25 transition focus:border-[#2d2362] focus:ring-4 focus:ring-[#2d2362]/10"
+                />
               </div>
-            )}
 
-            {/* Actions */}
-            <div className="mt-6 space-y-3">
+              {/* Description */}
+              <div>
+                <label
+                  htmlFor="description"
+                  className="mb-2 block text-[10px] font-black uppercase tracking-[0.15em] text-[#68647e]"
+                >
+                  Description
+                </label>
 
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={4}
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Describe ingredients, flavor, preparation or what makes this dish special..."
+                  required
+                  className="w-full resize-none rounded-xl border border-[#dedbe8] bg-white px-4 py-3.5 text-sm font-medium text-black outline-none placeholder:text-black/25 transition focus:border-[#2d2362] focus:ring-4 focus:ring-[#2d2362]/10"
+                />
+              </div>
+
+              {/* Video */}
+              <div>
+                <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.15em] text-[#68647e]">
+                  Dish Video
+                </label>
+
+                {!videoPreview ? (
+                  <label className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#cbc8d8] bg-white px-5 py-8 text-center transition hover:border-[#2d2362] hover:bg-[#f7f5ff]">
+
+                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#eeecf8] text-[#2d2362] transition group-hover:scale-105">
+                      <VideoIcon />
+                    </div>
+
+                    <p className="text-sm font-bold text-[#29234f]">
+                      Upload kitchen reel
+                    </p>
+
+                    <p className="mt-1 text-[10px] text-[#89859e]">
+                      MP4, WebM or MOV · Max recommended size 50MB
+                    </p>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="video/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                ) : (
+                  <div className="relative overflow-hidden rounded-2xl bg-black">
+                    <video
+                      src={videoPreview}
+                      controls
+                      className="max-h-[260px] w-full object-contain"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={handleRemoveVideo}
+                      disabled={isSubmitting}
+                      className="absolute right-3 top-3 rounded-full bg-black/75 px-4 py-2 text-xs font-bold text-white backdrop-blur transition hover:bg-black"
+                    >
+                      Change Video
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-black py-4 text-sm font-black text-white transition hover:bg-orange-500 hover:shadow-xl hover:shadow-orange-500/20 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#2d2362] py-4 text-sm font-bold text-white shadow-lg shadow-[#2d2362]/15 transition hover:bg-[#3b2f7b] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Publishing...
+                    Uploading & Publishing...
                   </>
                 ) : (
                   <>
                     Publish Dish
-                    <span className="text-lg transition-transform group-hover:translate-x-1">
-                      →
-                    </span>
+                    <span>→</span>
                   </>
                 )}
               </button>
-
-              <button
-                type="button"
-                onClick={resetForm}
-                disabled={isSubmitting}
-                className="w-full rounded-2xl border border-black/10 py-3.5 text-xs font-bold text-black/50 transition hover:border-black/20 hover:text-black disabled:opacity-50"
-              >
-                Clear form
-              </button>
-
-            </div>
-
-          </section>
-        </form>
-
-        {/* ===================================================
-            BOTTOM NOTE
-        =================================================== */}
-
-        <div className="mt-8 flex flex-col gap-3 border-t border-black/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-
-          <div className="flex items-center gap-2 text-[10px] font-medium text-black/35">
-            <LockIcon />
-            Your partner session is protected.
+            </form>
           </div>
-
-          <p className="text-[10px] text-black/30">
-            You can add pricing, categories and other menu metadata as your
-            partner tools expand.
-          </p>
         </div>
-      </div>
-    </main>
+      )}
+    </div>
   );
 }
 
 /* =============================================================
-   COMPONENTS
+   FOOD CARD
 ============================================================= */
 
-function ProgressStep({ number, label, active = false }) {
+function FoodCard({ food }) {
   return (
-    <div className="flex items-center gap-2">
-      <span
-        className={`flex h-7 w-7 items-center justify-center rounded-full text-[9px] font-black ${
-          active
-            ? "bg-black text-white"
-            : "border border-black/10 bg-white text-black/30"
-        }`}
-      >
-        {active ? "✓" : number}
-      </span>
+    <article className="group relative h-[185px] w-[145px] shrink-0">
 
-      <span
-        className={`hidden text-[10px] font-black uppercase tracking-[0.12em] sm:block ${
-          active ? "text-black/60" : "text-black/25"
-        }`}
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function SectionHeader({
-  icon,
-  eyebrow,
-  title,
-  description,
-}) {
-  return (
-    <div className="flex gap-4">
-
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black text-white">
-        {icon}
-      </div>
-
-      <div>
-        <p className="text-[9px] font-black uppercase tracking-[0.17em] text-black/35">
-          {eyebrow}
-        </p>
-
-        <h2 className="mt-1 text-lg font-black tracking-tight">
-          {title}
-        </h2>
-
-        <p className="mt-1 max-w-md text-xs leading-5 text-black/40">
-          {description}
-        </p>
-      </div>
-
-    </div>
-  );
-}
-
-function Field({ label, required, hint, children }) {
-  return (
-    <div>
-      <div className="mb-2 flex items-center justify-between">
-        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-black/50">
-          {label}
-
-          {required && (
-            <span className="ml-1 text-orange-500">*</span>
-          )}
-        </label>
-
-        {hint && (
-          <span className="text-[9px] font-semibold text-black/25">
-            {hint}
-          </span>
-        )}
-      </div>
-
-      {children}
-    </div>
-  );
-}
-
-function UploadBadge({ children }) {
-  return (
-    <span className="flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[9px] font-bold text-black/45">
-      {children}
-    </span>
-  );
-}
-
-function ChecklistItem({ done, text }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <span
-        className={`flex h-5 w-5 items-center justify-center rounded-full text-[9px] ${
-          done
-            ? "bg-green-100 text-green-600"
-            : "bg-black/5 text-black/20"
-        }`}
-      >
-        {done ? "✓" : "•"}
-      </span>
-
-      <span className="text-[11px] font-medium text-black/50">
-        {text}
-      </span>
-    </div>
-  );
-}
-
-function VideoPreview({
-  videoFile,
-  videoPreview,
-  onRemove,
-  disabled,
-}) {
-  return (
-    <div className="overflow-hidden rounded-[22px] border border-black/10 bg-black">
-
-      <div className="relative">
-
-        <video
-          src={videoPreview}
-          controls
-          playsInline
-          className="max-h-[330px] w-full object-contain"
+      {/* Image */}
+      <div className="absolute left-1/2 top-0 z-10 h-[92px] w-[92px] -translate-x-1/2 overflow-hidden rounded-full border-[5px] border-white bg-[#e9e6dd] shadow-md transition duration-500 group-hover:-translate-y-1 group-hover:scale-105">
+        <img
+          src={food.image}
+          alt={food.name}
+          className="h-full w-full object-cover"
         />
-
-        <button
-          type="button"
-          onClick={onRemove}
-          disabled={disabled}
-          className="absolute right-3 top-3 flex items-center gap-2 rounded-full bg-black/80 px-3 py-2 text-[10px] font-bold text-white backdrop-blur transition hover:bg-black disabled:opacity-50"
-        >
-          <XIcon />
-          Change
-        </button>
-
       </div>
 
-      <div className="bg-white p-4">
+      {/* Card */}
+      <div className="absolute bottom-0 left-0 right-0 h-[118px] rounded-[20px] bg-white px-3 pb-3 pt-[57px] shadow-sm transition group-hover:-translate-y-1 group-hover:shadow-md">
 
-        <div className="flex items-center gap-3">
-
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black text-white">
-            <VideoIcon />
-          </div>
-
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xs font-bold text-black">
-              {videoFile?.name}
-            </p>
-
-            <p className="mt-1 text-[9px] text-black/35">
-              {formatFileSize(videoFile?.size)}
-            </p>
-          </div>
-
-          <span className="rounded-full bg-green-50 px-2.5 py-1 text-[9px] font-bold text-green-600">
-            Ready
+        <div className="flex items-center justify-between gap-1">
+          <span className="text-[8px] text-[#aaa6b9]">
+            ★ {food.rating}
           </span>
 
+          <span className="rounded-full bg-[#2d2362] px-2 py-1 text-[8px] font-bold text-white">
+            {food.price}
+          </span>
         </div>
 
+        <h3 className="mt-1 line-clamp-1 text-[11px] font-bold text-[#29234f]">
+          {food.name}
+        </h3>
+
+        <p className="mt-0.5 text-[9px] text-[#8b879d]">
+          {food.category}
+        </p>
       </div>
+    </article>
+  );
+}
+
+/* =============================================================
+   ORDER ROW
+============================================================= */
+
+function OrderRow({ name, qty, price, image }) {
+  return (
+    <div className="flex items-center gap-3">
+      <img
+        src={image}
+        alt={name}
+        className="h-10 w-10 rounded-full object-cover shadow-sm"
+      />
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[11px] font-bold text-[#393451]">
+          {name}
+        </p>
+
+        <p className="mt-0.5 text-[10px] text-[#9490a7]">
+          {qty}
+        </p>
+      </div>
+
+      <span className="text-[10px] font-semibold text-[#6f6b84]">
+        {price}
+      </span>
     </div>
   );
 }
 
-function formatFileSize(bytes = 0) {
-  if (!bytes) return "0 MB";
+/* =============================================================
+   STAT ROW
+============================================================= */
 
-  const mb = bytes / (1024 * 1024);
+function StatRow({ label, value, green = false }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-xs text-[#89859d]">
+        {label}
+      </span>
 
-  if (mb < 1) {
-    return `${Math.round(bytes / 1024)} KB`;
-  }
+      <span
+        className={`text-xs font-bold ${
+          green ? "text-green-600" : "text-[#393451]"
+        }`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
 
-  return `${mb.toFixed(1)} MB`;
+/* =============================================================
+   SIDEBAR BUTTON
+============================================================= */
+
+function SidebarButton({ icon, active, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`relative flex h-11 w-11 items-center justify-center rounded-xl transition ${
+        active
+          ? "bg-white text-[#2d2362]"
+          : "text-white/45 hover:bg-white/10 hover:text-white"
+      }`}
+    >
+      {icon}
+    </button>
+  );
 }
 
 /* =============================================================
    ICONS
 ============================================================= */
 
-function ArrowLeftIcon() {
+function SearchIcon() {
   return (
     <svg
-      width="14"
-      height="14"
+      className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#77738f]"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
     >
+      <circle cx="11" cy="11" r="7" strokeWidth="1.8" />
+      <path d="m20 20-4-4" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function HomeIcon() {
+  return (
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
-        d="M19 12H5m7 7-7-7 7-7"
-        strokeWidth="1.8"
-        strokeLinecap="round"
+        d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"
+        strokeWidth="1.6"
         strokeLinejoin="round"
       />
     </svg>
   );
 }
 
-function InfoIcon() {
+function MenuIcon() {
   return (
-    <svg
-      width="20"
-      height="20"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <circle cx="12" cy="12" r="9" strokeWidth="1.6" />
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BagIcon() {
+  return (
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
-        d="M12 11v5m0-8v.1"
-        strokeWidth="1.8"
+        d="M6 8h12l1 12H5L6 8Z"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="M9 8a3 3 0 0 1 6 0" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+function HeartIcon() {
+  return (
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        d="M20.8 8.8c0 5.5-8.8 10-8.8 10s-8.8-4.5-8.8-10A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 8.8 2.8Z"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function MessageIcon() {
+  return (
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="15" rx="2" strokeWidth="1.6" />
+      <path d="m7 20 3-3h8" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3" strokeWidth="1.6" />
+      <path
+        d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 1.7-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L8 17l.1-.1A1.7 1.7 0 0 0 8.4 15a1.7 1.7 0 0 0-1.6-1H6v-2h.8a1.7 1.7 0 0 0 1.6-1A1.7 1.7 0 0 0 8 9.1L7.9 9 9.6 7.3l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V6H15v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.7 9l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v2h-.1a1.7 1.7 0 0 0-1.5 1Z"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function LogoutIcon() {
+  return (
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        d="M10 17l5-5-5-5M15 12H3M21 4v16"
+        strokeWidth="1.6"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -975,134 +1048,17 @@ function InfoIcon() {
 function VideoIcon() {
   return (
     <svg
-      width="20"
-      height="20"
+      width="22"
+      height="22"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
     >
-      <rect
-        x="3"
-        y="5"
-        width="13"
-        height="14"
-        rx="2"
-        strokeWidth="1.6"
-      />
-
+      <rect x="3" y="5" width="13" height="14" rx="2" strokeWidth="1.6" />
       <path
         d="m16 10 5-3v10l-5-3"
         strokeWidth="1.6"
         strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function UploadIcon() {
-  return (
-    <svg
-      width="25"
-      height="25"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M12 16V4m0 0L7 9m5-5 5 5"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      <path
-        d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function FileIcon() {
-  return (
-    <svg
-      width="11"
-      height="11"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"
-        strokeWidth="1.5"
-      />
-
-      <path
-        d="M14 2v6h6"
-        strokeWidth="1.5"
-      />
-    </svg>
-  );
-}
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-black/30"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="m6 9 6 6 6-6"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function XIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="m6 6 12 12M18 6 6 18"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function LockIcon() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <rect
-        x="5"
-        y="10"
-        width="14"
-        height="10"
-        rx="2"
-        strokeWidth="1.6"
-      />
-
-      <path
-        d="M8 10V7a4 4 0 0 1 8 0v3"
-        strokeWidth="1.6"
       />
     </svg>
   );

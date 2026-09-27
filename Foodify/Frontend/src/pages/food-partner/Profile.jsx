@@ -14,6 +14,7 @@ const fallbackPartner = {
     bio: "",
     location: "",
     image: "",
+    rating: "4.9",
 };
 
 /* =========================================================
@@ -125,7 +126,7 @@ const Icon = ({ name, size = 20 }) => {
    FOOD CARD
 ========================================================= */
 
-function FoodCard({ item, onAdd, index }) {
+function FoodCard({ item, onAdd }) {
     const videoRef = useRef(null);
     const cardRef = useRef(null);
 
@@ -304,7 +305,6 @@ function Sidebar({ partner }) {
                         partner.name?.charAt(0)?.toUpperCase() || "N"
                     )}
 
-                    <span className="absolute bottom-1 right-1 h-3 w-3 rounded-full border-2 border-white bg-[#65b84b]" />
                 </div>
 
                 <h3 className="mt-4 text-[14px] font-extrabold text-[#34261c]">
@@ -316,15 +316,28 @@ function Sidebar({ partner }) {
                 </p>
             </div>
 
-            {/* BALANCE */}
-            <div className="mt-9 rounded-[20px] bg-[#eee7df] px-5 py-4">
-                <p className="text-[9px] font-semibold text-[#998879]">
-                    Your Balance
-                </p>
+            {/* PARTNER METRICS */}
+            <div className="mt-9 grid grid-cols-2 gap-2">
+                <div className="rounded-[20px] bg-[#eee7df] px-4 py-4">
+                    <p className="text-[9px] font-semibold leading-3 text-[#998879]">
+                        Total Orders
+                    </p>
 
-                <p className="mt-1 text-[25px] font-extrabold tracking-[-0.04em] text-[#211914]">
-                    $1,328
-                </p>
+                    <p className="mt-2 text-[25px] font-extrabold tracking-[-0.04em] text-[#211914]">
+                        128
+                    </p>
+                </div>
+
+                <div className="rounded-[20px] bg-[#eee7df] px-4 py-4">
+                    <p className="text-[9px] font-semibold leading-3 text-[#998879]">
+                        Rating
+                    </p>
+
+                    <p className="mt-2 flex items-center gap-1 text-[22px] font-extrabold tracking-[-0.04em] text-[#211914]">
+                        <Icon name="star" size={16} />
+                        {partner.rating}
+                    </p>
+                </div>
             </div>
 
             {/* NAVIGATION */}
@@ -372,47 +385,6 @@ function Sidebar({ partner }) {
                     Favorite
                 </Link>
 
-                <Link
-                    to="/articles"
-                    className="
-                        flex
-                        min-h-[50px]
-                        items-center
-                        gap-3
-                        rounded-[14px]
-                        px-5
-                        text-[12px]
-                        font-bold
-                        text-[#8c7b6c]
-                        transition
-                        hover:bg-white
-                        hover:text-[#33261d]
-                    "
-                >
-                    <Icon name="article" size={18} />
-                    Articles
-                </Link>
-
-                <Link
-                    to="/settings"
-                    className="
-                        flex
-                        min-h-[50px]
-                        items-center
-                        gap-3
-                        rounded-[14px]
-                        px-5
-                        text-[12px]
-                        font-bold
-                        text-[#8c7b6c]
-                        transition
-                        hover:bg-white
-                        hover:text-[#33261d]
-                    "
-                >
-                    <Icon name="settings" size={18} />
-                    Setting
-                </Link>
             </nav>
 
             <div className="mt-auto">
@@ -664,6 +636,7 @@ export default function Profile() {
     const { partnerId } = useParams();
 
     const pageRef = useRef(null);
+    const mainRef = useRef(null);
 
     const [foods, setFoods] = useState([]);
     const [partner, setPartner] = useState(fallbackPartner);
@@ -696,7 +669,9 @@ export default function Profile() {
                     foodResponse.data.foodItems ?? [];
 
                 const partnerFoods = allFoods.filter(
-                    (item) => item.foodpartner === partnerId
+                    (item) =>
+                        String(item.foodpartner) ===
+                        String(partnerId)
                 );
 
                 setFoods(partnerFoods);
@@ -727,6 +702,11 @@ export default function Profile() {
                         data.profileImage ||
                         data.avatar ||
                         "",
+
+                    rating:
+                        data.rating ||
+                        data.averageRating ||
+                        fallbackPartner.rating,
                 });
             })
             .catch((error) => {
@@ -821,6 +801,8 @@ export default function Profile() {
 
         const ctx = gsap.context(() => {
             const lenis = new Lenis({
+                wrapper: mainRef.current,
+                content: mainRef.current,
                 duration: 1.15,
                 smoothWheel: true,
                 touchMultiplier: 1.2,
@@ -913,6 +895,7 @@ export default function Profile() {
                         ease: "power3.out",
                         scrollTrigger: {
                             trigger: card,
+                            scroller: mainRef.current,
                             start: "top 92%",
                             once: true,
                         },
@@ -934,6 +917,7 @@ export default function Profile() {
                         ease: "power3.out",
                         scrollTrigger: {
                             trigger: section,
+                            scroller: mainRef.current,
                             start: "top 88%",
                             once: true,
                         },
@@ -949,6 +933,7 @@ export default function Profile() {
                 ease: "none",
                 scrollTrigger: {
                     trigger: "[data-hero]",
+                    scroller: mainRef.current,
                     start: "top bottom",
                     end: "bottom top",
                     scrub: true,
@@ -981,15 +966,15 @@ export default function Profile() {
         <div
             ref={pageRef}
             className="
-                min-h-screen
+                h-screen
                 w-full
-                overflow-x-hidden
+                overflow-hidden
                 bg-[#eee8e1]
                 font-ui
                 text-[#35271e]
             "
         >
-            <div className="flex min-h-screen w-full bg-[#f7f3ee]">
+            <div className="flex h-full w-full bg-[#f7f3ee]">
 
                 {/* =================================================
                     SIDEBAR
@@ -1003,7 +988,10 @@ export default function Profile() {
                     MAIN
                 ================================================= */}
 
-                <main className="min-w-0 flex-1 bg-[#f7f3ee]">
+                <main
+                    ref={mainRef}
+                    className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-[#f7f3ee]"
+                >
 
                     {/* MOBILE HEADER */}
 
@@ -1158,7 +1146,7 @@ export default function Profile() {
                                 <div className="mt-8 flex flex-wrap items-center gap-3">
 
                                     <a
-                                        href="#popular-food"
+                                        href="#latest-food"
                                         className="
                                             inline-flex
                                             min-h-[52px]
@@ -1183,47 +1171,6 @@ export default function Profile() {
                                         />
                                     </a>
 
-                                    <div
-                                        className="
-                                            flex
-                                            min-h-[52px]
-                                            items-center
-                                            gap-3
-                                            rounded-[15px]
-                                            border
-                                            border-white/20
-                                            bg-white/10
-                                            px-5
-                                            backdrop-blur-md
-                                        "
-                                    >
-                                        <div className="flex text-[#ffc34d]">
-                                            <Icon
-                                                name="star"
-                                                size={13}
-                                            />
-                                            <Icon
-                                                name="star"
-                                                size={13}
-                                            />
-                                            <Icon
-                                                name="star"
-                                                size={13}
-                                            />
-                                            <Icon
-                                                name="star"
-                                                size={13}
-                                            />
-                                            <Icon
-                                                name="star"
-                                                size={13}
-                                            />
-                                        </div>
-
-                                        <span className="text-[10px] font-bold text-white">
-                                            Food partner
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -1362,7 +1309,7 @@ export default function Profile() {
 
                                 {/* STATS */}
 
-                                <div className="mt-6 grid grid-cols-3 gap-3">
+                                <div className="mt-6 grid grid-cols-2 gap-3">
                                     <div className="rounded-[17px] bg-[#f8f3ed] p-4">
                                         <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-[#a39180]">
                                             Dishes
@@ -1383,17 +1330,68 @@ export default function Profile() {
                                         </p>
                                     </div>
 
-                                    <div className="rounded-[17px] bg-[#f8f3ed] p-4">
-                                        <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-[#a39180]">
-                                            Status
-                                        </p>
-
-                                        <p className="mt-1 text-[18px] font-extrabold tracking-tight text-[#5d9a43]">
-                                            Active
-                                        </p>
-                                    </div>
                                 </div>
                             </div>
+                        </section>
+
+                        {/* =================================================
+                            REELS
+                        ================================================= */}
+
+                        <section
+                            data-section
+                            className="mt-9"
+                        >
+                            <div className="flex items-end justify-between">
+                                <div>
+                                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#ad9986]">
+                                        Watch the kitchen
+                                    </p>
+
+                                    <h2 className="mt-1 font-display text-[32px] leading-none text-[#33261d]">
+                                        Latest Reels
+                                    </h2>
+                                </div>
+
+                                <span className="hidden text-[10px] font-semibold text-[#a08d7d] sm:block">
+                                    Fresh from {partner.name}
+                                </span>
+                            </div>
+
+                            {foods.length > 0 ? (
+                                <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                    {foods.slice(0, 6).map((item) => (
+                                        <article
+                                            key={`reel-${item._id}`}
+                                            className="group relative aspect-[3/4] overflow-hidden rounded-[20px] bg-[#30231d] shadow-[0_8px_24px_rgba(67,47,30,0.1)]"
+                                        >
+                                            <video
+                                                src={item.video}
+                                                muted
+                                                autoPlay
+                                                loop
+                                                playsInline
+                                                preload="metadata"
+                                                className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                                            />
+
+                                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-4 pb-4 pt-12 text-white">
+                                                <p className="truncate text-[12px] font-extrabold">
+                                                    {item.name}
+                                                </p>
+
+                                                <p className="mt-1 line-clamp-1 text-[10px] font-medium text-white/70">
+                                                    {item.description || "Fresh from the kitchen"}
+                                                </p>
+                                            </div>
+                                        </article>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="mt-5 rounded-[20px] border border-dashed border-[#dfd2c5] bg-white px-6 py-10 text-center text-[11px] font-medium text-[#a08e7d]">
+                                    Reels from this kitchen will appear here.
+                                </div>
+                            )}
                         </section>
 
                         {/* =================================================
@@ -1518,8 +1516,8 @@ export default function Profile() {
 
                         <section
                             data-section
-                            id="popular-food"
-                            className="mt-10 pb-10"
+                            id="latest-food"
+                            className="mt-10 pb-5"
                         >
                             <div className="mb-5 flex items-end justify-between">
                                 <div>
@@ -1528,7 +1526,7 @@ export default function Profile() {
                                     </p>
 
                                     <h2 className="mt-1 font-display text-[34px] leading-none text-[#33261d]">
-                                        Popular Food
+                                        Latest Food
                                     </h2>
                                 </div>
 
@@ -1538,7 +1536,7 @@ export default function Profile() {
                             </div>
 
                             {loading ? (
-                                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                                     {[1, 2, 3, 4, 5, 6].map(
                                         (item) => (
                                             <div
@@ -1559,15 +1557,12 @@ export default function Profile() {
                             ) : visibleFoods.length > 0 ? (
                                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                                     {visibleFoods.map(
-                                        (item, index) => (
+                                        (item) => (
                                             <FoodCard
                                                 key={
                                                     item._id
                                                 }
                                                 item={item}
-                                                index={
-                                                    index
-                                                }
                                                 onAdd={
                                                     addToCart
                                                 }

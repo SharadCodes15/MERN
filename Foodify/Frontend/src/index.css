@@ -1,7 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Playwrite+BE+WAL+Guides&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
 @import "tailwindcss";
+/*  Create food */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root {
   /* Surface & Backgrounds */
   --bg-canvas: #f8faf9;
@@ -288,4 +293,96 @@ body {
   .reel-actions {
     right: 0.75rem;
   }
+}
+
+
+
+
+
+
+
+/* =========================================================
+   CRAVE TYPOGRAPHY
+========================================================= */
+
+html {
+  font-family: "DM Sans", sans-serif;
+}
+
+.font-serif {
+  font-family: "DM Serif Display", serif;
+}
+
+
+/* =========================================================
+   CRAVE INPUT
+========================================================= */
+
+@layer components {
+
+  .crave-input {
+    @apply w-full rounded-[18px] border border-[#17352a]/10 bg-[#f7f3ea] px-4 py-3.5 text-sm font-medium text-[#17352a] outline-none transition;
+  }
+
+  .crave-input::placeholder {
+    color: rgba(23, 53, 42, 0.25);
+  }
+
+  .crave-input:hover {
+    border-color: rgba(23, 53, 42, 0.18);
+  }
+
+  .crave-input:focus {
+    border-color: rgba(47, 112, 75, 0.5);
+    background: #fffdf8;
+    box-shadow:
+      0 0 0 4px rgba(47, 112, 75, 0.07);
+  }
+
+  select.crave-input {
+    cursor: pointer;
+  }
+
+}
+
+
+/* =========================================================
+   SELECTION
+========================================================= */
+
+::selection {
+  background: #2f704b;
+  color: white;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f1e8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(23, 53, 42, 0.2);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(23, 53, 42, 0.35);
+}
+
+
+/* =========================================================
+   NUMBER INPUT
+========================================================= */
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.35;
 }
