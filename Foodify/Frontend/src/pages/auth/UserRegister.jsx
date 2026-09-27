@@ -77,7 +77,7 @@ export default function UserRegister() {
           border
           border-black/10
           bg-[#fffaf3]
-          shadow-[0_20px_60px_rgba(0,0,0,0.14)]
+          shadow-[0_24px_80px_rgba(66,34,10,0.24)]
           md:min-h-0
         "
       >

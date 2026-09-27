@@ -83,7 +83,7 @@ export default function PartnerRegister() {
           border
           border-white/10
           bg-[#f4f0e8]
-          shadow-[0_30px_90px_rgba(0,0,0,0.35)]
+          shadow-[0_24px_80px_rgba(66,34,10,0.3)]
           md:min-h-0
         "
       >

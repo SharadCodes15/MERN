@@ -65,7 +65,7 @@ export default function PartnerLogin() {
 
   return (
     <main className="h-[100dvh] overflow-x-hidden overflow-y-hidden bg-[#e87524] p-3 md:p-5">
-      <div className="relative flex h-full min-h-0 overflow-hidden rounded-[30px] border border-white/10 bg-[#f4f0e8] shadow-[0_30px_90px_rgba(0,0,0,0.35)]">
+      <div className="relative flex h-full min-h-0 overflow-hidden rounded-[30px] border border-white/10 bg-[#f4f0e8] shadow-[0_24px_80px_rgba(66,34,10,0.3)]">
 
         {/* ================= LEFT PANEL ================= */}
         <section className="relative hidden w-[44%] overflow-hidden bg-[#b9541d] text-white lg:block">
