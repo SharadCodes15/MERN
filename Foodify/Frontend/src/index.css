@@ -386,3 +386,29 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   opacity: 0.35;
 }
+
+.auth-form-scroll {
+  min-height: 0;
+  max-width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(194, 105, 36, 0.65) transparent;
+}
+
+.auth-form-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+
+.auth-form-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.auth-form-scroll::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: rgba(194, 105, 36, 0.65);
+}

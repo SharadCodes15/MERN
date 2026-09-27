@@ -61,7 +61,7 @@ export default function UserRegister() {
   };
 
   return (
-    <main className="min-h-screen overflow-auto bg-[#ddd7ce] p-3 md:p-5">
+    <main className="h-[100dvh] overflow-x-hidden overflow-y-hidden bg-[#f4ad32] p-3 md:p-5">
 
       {/* ===================================================== */}
       {/* MAIN CARD */}
@@ -70,14 +70,15 @@ export default function UserRegister() {
       <div
         className="
           flex
-          min-h-[calc(100vh-24px)]
+          h-full
+          min-h-0
           overflow-hidden
           rounded-[32px]
           border
           border-black/10
           bg-[#fffaf3]
           shadow-[0_20px_60px_rgba(0,0,0,0.14)]
-          md:min-h-[calc(100vh-40px)]
+          md:min-h-0
         "
       >
 
@@ -290,12 +291,13 @@ export default function UserRegister() {
 
         <section
           className="
+            auth-form-scroll
             relative
             flex
             flex-1
+            min-h-0
             items-center
             justify-center
-            overflow-hidden
             bg-[#fffaf3]
             px-6
             py-8

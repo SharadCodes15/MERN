@@ -66,7 +66,7 @@ export default function PartnerRegister() {
   };
 
   return (
-    <main className="min-h-screen overflow-auto bg-[#171717] p-3 md:p-5">
+    <main className="h-[100dvh] overflow-x-hidden overflow-y-hidden bg-[#e87524] p-3 md:p-5">
 
       {/* ===================================================== */}
       {/* MAIN CONTAINER */}
@@ -76,14 +76,15 @@ export default function PartnerRegister() {
         className="
           relative
           flex
-          min-h-[calc(100vh-24px)]
+          h-full
+          min-h-0
           overflow-hidden
           rounded-[30px]
           border
           border-white/10
           bg-[#f4f0e8]
           shadow-[0_30px_90px_rgba(0,0,0,0.35)]
-          md:min-h-[calc(100vh-40px)]
+          md:min-h-0
         "
       >
 
@@ -97,7 +98,7 @@ export default function PartnerRegister() {
             hidden
             w-[42%]
             overflow-hidden
-            bg-[#191919]
+            bg-[#b9541d]
             text-white
             lg:block
           "
@@ -130,7 +131,7 @@ export default function PartnerRegister() {
               font-black
               leading-[0.75]
               tracking-[-0.08em]
-              text-white/[0.035]
+              text-white/[0.14]
             "
           >
             COOK
@@ -261,10 +262,6 @@ export default function PartnerRegister() {
 
           <div className="absolute bottom-8 left-9">
 
-            <p className="max-w-sm text-xs leading-5 text-white/40">
-              Built for independent kitchens, chefs and food businesses
-              that want to reach more hungry customers.
-            </p>
 
           </div>
 
@@ -277,12 +274,13 @@ export default function PartnerRegister() {
 
         <section
           className="
+            auth-form-scroll
             relative
             flex
             flex-1
+            min-h-0
             items-center
             justify-center
-            overflow-hidden
             bg-[#f4f0e8]
             px-6
             py-8
@@ -375,10 +373,6 @@ export default function PartnerRegister() {
                 kitchen.
               </h1>
 
-              <p className="mt-3 max-w-md text-sm font-medium leading-5 text-black/55">
-                Tell us about your food business. Once verified,
-                you'll be ready to publish your menu on CRAVE.
-              </p>
 
             </div>
 

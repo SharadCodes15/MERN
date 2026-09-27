@@ -7,7 +7,7 @@ export default function AuthLayout({
   partnerMode = false,
 }) {
   return (
-    <main className="relative min-h-screen overflow-auto bg-[#ddd7ce] p-3 font-sans sm:p-5 lg:p-8">
+    <main className="relative min-h-screen overflow-auto bg-[#f4ad32] p-3 font-sans sm:p-5 lg:p-8">
       {/* Background */}
       <div className="pointer-events-none absolute inset-0 opacity-40">
         <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-orange-300/20 blur-3xl" />

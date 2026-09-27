@@ -64,11 +64,11 @@ export default function PartnerLogin() {
   };
 
   return (
-    <main className="min-h-screen overflow-auto bg-[#171717] p-3 md:p-5">
-      <div className="relative flex min-h-[calc(100vh-24px)] overflow-hidden rounded-[30px] border border-white/10 bg-[#f4f0e8] shadow-[0_30px_90px_rgba(0,0,0,0.35)] md:min-h-[calc(100vh-40px)]">
+    <main className="h-[100dvh] overflow-x-hidden overflow-y-hidden bg-[#e87524] p-3 md:p-5">
+      <div className="relative flex h-full min-h-0 overflow-hidden rounded-[30px] border border-white/10 bg-[#f4f0e8] shadow-[0_30px_90px_rgba(0,0,0,0.35)]">
 
         {/* ================= LEFT PANEL ================= */}
-        <section className="relative hidden w-[44%] overflow-hidden bg-[#191919] text-white lg:block">
+        <section className="relative hidden w-[44%] overflow-hidden bg-[#b9541d] text-white lg:block">
 
           {/* Brand */}
           <div className="absolute left-8 top-8 z-20">
@@ -84,8 +84,14 @@ export default function PartnerLogin() {
             </p>
           </div>
 
+          <div className="pointer-events-none absolute -bottom-4 -left-3 z-0 select-none text-[8vw] font-black leading-[0.75] tracking-[-0.08em] text-white/[0.14]">
+            COOK
+            <br />
+            CREATE
+          </div>
+
           {/* Food image */}
-          <div className="group absolute left-8 right-8 top-[17%] bottom-[23%] overflow-hidden rounded-[28px] border border-white/10 bg-[#242424] shadow-2xl">
+          <div className="group absolute left-8 right-8 top-[17%] bottom-[23%] overflow-hidden rounded-[28px] border border-white/20 bg-[#d36b25] shadow-2xl">
             <img
               src="/Images/hotel.jpg"
               alt="CRAVE food partner"
@@ -116,20 +122,15 @@ export default function PartnerLogin() {
           </div>
 
           {/* Bottom status */}
-          <div className="absolute bottom-7 left-8 right-8 flex items-center justify-between">
+          <div className="absolute bottom-7 left-8 right-8">
             <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/30">
               CRAVE Partner Portal
-            </span>
-
-            <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">
-              <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-              Secure Access
             </span>
           </div>
         </section>
 
         {/* ================= RIGHT PANEL ================= */}
-        <section className="flex flex-1 items-center justify-center bg-[#f4f0e8] px-6 py-10 md:px-12 lg:px-16">
+        <section className="auth-form-scroll flex min-h-0 flex-1 items-center justify-center bg-[#f4f0e8] px-6 py-10 md:px-12 lg:px-16">
           <div className="w-full max-w-md">
 
             <BackToLanding />
