@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import BackToLanding from "./BackToLanding";
 
 const initialFormState = {
   firstName: "",
@@ -319,6 +320,8 @@ export default function UserRegister() {
           />
 
           <div className="relative z-10 w-full max-w-[410px]">
+
+            <BackToLanding />
 
             {/* Mobile logo */}
 

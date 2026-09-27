@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import BackToLanding from "./BackToLanding";
 
 const initialRegisterState = {
   name: "",
@@ -307,6 +308,8 @@ export default function PartnerRegister() {
 
 
           <div className="relative z-10 w-full max-w-[520px]">
+
+            <BackToLanding />
 
             {/* ================================================= */}
             {/* MOBILE LOGO */}

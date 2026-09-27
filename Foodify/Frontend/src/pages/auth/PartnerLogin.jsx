@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import BackToLanding from "./BackToLanding";
 
 const initialLoginState = {
   email: "",
@@ -130,6 +131,8 @@ export default function PartnerLogin() {
         {/* ================= RIGHT PANEL ================= */}
         <section className="flex flex-1 items-center justify-center bg-[#f4f0e8] px-6 py-10 md:px-12 lg:px-16">
           <div className="w-full max-w-md">
+
+            <BackToLanding />
 
             {/* Mobile brand */}
             <Link
