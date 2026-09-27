@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { RiArrowLeftLine, RiBookmarkFill, RiPlayCircleLine } from "@remixicon/react";
 import { Link, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const API_URL = "http://localhost:3000/api";
 
@@ -9,6 +10,14 @@ export default function Saved() {
   const [savedItems, setSavedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await axios.get(`${API_URL}/auth/user/logout`, { withCredentials: true });
+    } finally {
+      navigate("/user/login", { replace: true });
+    }
+  };
 
   useEffect(() => {
     axios
@@ -27,7 +36,8 @@ export default function Saved() {
   }, [navigate]);
 
   return (
-    <div className="min-h-[100dvh] bg-[var(--bg-canvas)] px-4 py-5 text-[var(--text-main)] sm:px-8">
+    <div className="min-h-[100dvh] bg-[#f7f3ee] px-4 py-5 pt-20 text-[#291e17] sm:px-8 lg:pl-[280px] lg:pt-10">
+      <Navbar onLogout={handleLogout} />
       <main className="mx-auto max-w-5xl">
         <header className="mb-8 flex items-center justify-between gap-4">
           <div>

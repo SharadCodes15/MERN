@@ -1,41 +1,72 @@
-import { RiBookmarkLine, RiLogoutBoxLine } from "@remixicon/react";
-import { Link } from "react-router-dom";
+import {
+  RiBookmarkLine,
+  RiCompass3Line,
+  RiHome5Line,
+  RiLogoutBoxLine,
+  RiPlayCircleLine,
+  RiSearchLine,
+} from "@remixicon/react";
+import { Link, useLocation } from "react-router-dom";
 
-export default function Navbar({ showNavbar, onLogout }) {
-  if (showNavbar) {
-    return (
-      <header className="navbar-fade-away pointer-events-none absolute inset-x-0 top-0 z-20 border-b border-white/15 bg-black/20 text-white backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-          <Link to="/home" className="pointer-events-auto flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-[var(--primary)] ring-2 ring-white/50" />
-            <span className="font-serif text-base font-medium tracking-tight sm:text-lg">
-              Kitchen Atelier
-            </span>
-          </Link>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="pointer-events-auto rounded-lg border border-white/30 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.14em] text-white/80 transition-colors hover:bg-white/15 hover:text-white sm:text-xs"
-          >
-            <RiLogoutBoxLine aria-hidden="true" />
-            <span>Logout</span>
-          </button>
-        </div>
-      </header>
-    );
-  }
+const navItems = [
+  { label: "Home", to: "/home", icon: RiHome5Line },
+  { label: "Reels", to: "/reels", icon: RiPlayCircleLine },
+  { label: "Saved", to: "/saved", icon: RiBookmarkLine },
+];
+
+export default function Navbar({ onLogout }) {
+  const location = useLocation();
 
   return (
-    <nav
-      aria-label="Primary navigation"
-      className="dynamic-island pointer-events-auto absolute left-1/2 top-4 z-20 flex h-10 -translate-x-1/2 items-center gap-3 rounded-full border border-white/25 bg-black/45 px-4 text-white shadow-lg backdrop-blur-xl"
-    >
-      <Link to="/home" aria-label="Go to home" className="text-xs font-medium tracking-[0.12em]">
-        Home
-      </Link>
-      <Link to="/saved" aria-label="Open saved reels" className="border-l border-white/25 pl-3">
-        <RiBookmarkLine aria-hidden="true" />
-      </Link>
-    </nav>
+    <>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[250px] border-r border-[#e9e0d7] bg-[#fffdf9] px-7 py-8 lg:block">
+        <Link to="/home" className="font-serif text-3xl font-black tracking-[-0.06em] text-[#211914]">
+          crave<span className="text-[#e85d26]">.</span>
+        </Link>
+
+        <nav className="mt-16 space-y-2" aria-label="Primary navigation">
+          {navItems.map(({ label, to, icon: Icon }) => {
+            const active = location.pathname === to;
+            return (
+              <Link
+                key={to}
+                to={to}
+                className={`flex min-h-12 items-center gap-4 rounded-2xl px-4 text-sm font-bold transition ${active ? "bg-[#fff0df] text-[#df571e]" : "text-[#75675e] hover:bg-[#f8f2ec] hover:text-[#211914]"}`}
+              >
+                <Icon size={22} />
+                {label}
+              </Link>
+            );
+          })}
+          <button type="button" className="flex min-h-12 w-full items-center gap-4 rounded-2xl px-4 text-sm font-bold text-[#75675e] transition hover:bg-[#f8f2ec] hover:text-[#211914]">
+            <RiSearchLine size={22} />
+            Search
+          </button>
+          <button type="button" className="flex min-h-12 w-full items-center gap-4 rounded-2xl px-4 text-sm font-bold text-[#75675e] transition hover:bg-[#f8f2ec] hover:text-[#211914]">
+            <RiCompass3Line size={22} />
+            Explore
+          </button>
+        </nav>
+
+        <button type="button" onClick={onLogout} className="absolute bottom-8 left-7 flex items-center gap-4 rounded-2xl px-4 py-3 text-sm font-bold text-[#75675e] transition hover:bg-[#f8f2ec] hover:text-[#211914]">
+          <RiLogoutBoxLine size={22} />
+          Logout
+        </button>
+      </aside>
+
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-[#e9e0d7] bg-[#fffdf9]/95 px-5 backdrop-blur lg:hidden">
+        <Link to="/home" className="font-serif text-2xl font-black tracking-[-0.06em] text-[#211914]">
+          crave<span className="text-[#e85d26]">.</span>
+        </Link>
+        <nav className="flex items-center gap-4" aria-label="Mobile navigation">
+          {navItems.map(({ label, to, icon: Icon }) => (
+            <Link key={to} to={to} aria-label={label} className={location.pathname === to ? "text-[#df571e]" : "text-[#75675e]"}>
+              <Icon size={22} />
+            </Link>
+          ))}
+          <button type="button" onClick={onLogout} aria-label="Logout" className="text-[#75675e]"><RiLogoutBoxLine size={22} /></button>
+        </nav>
+      </header>
+    </>
   );
 }

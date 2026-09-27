@@ -97,6 +97,16 @@ body {
   display: none;
 }
 
+.reels-page-feed {
+  scrollbar-width: none;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+}
+
+.reels-page-feed::-webkit-scrollbar {
+  display: none;
+}
+
 .reels-feed--mobile {
   width: min(390px, calc(100% - 2rem));
   height: min(844px, calc(100% - 2rem));

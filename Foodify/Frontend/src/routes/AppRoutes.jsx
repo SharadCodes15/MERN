@@ -6,6 +6,7 @@ import UserLogin from '../pages/auth/UserLogin'
 import PartnerRegister from '../pages/auth/PartnerRegister'
 import PartnerLogin from '../pages/auth/PartnerLogin'
 import Home from '../pages/general/Home';
+import Reels from '../pages/general/Reels';
 import CreateFood from '../pages/food-partner/CreateFood';
 import Profile from '../pages/food-partner/Profile';
 import Saved from '../pages/general/Saved';
@@ -69,6 +70,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/landing" element={<Landingpage />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/reels" element={<Reels />} />
         <Route path="/saved" element={<Saved />} />
         <Route path="/create-food" element={<PartnerOnlyRoute />} />
         <Route path="/food-partner/:partnerId" element={<Profile />} />
