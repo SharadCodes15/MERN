@@ -37,10 +37,16 @@ export default function PartnerLogin() {
     };
 
     try {
+      await axios.get("/api/auth/user/logout", {
+        withCredentials: true,
+      });
+
       await axios.post(
-        "http://localhost:3000/api/auth/foodpartner/login",
+        "/api/auth/foodpartner/login",
         payload,
-        { withCredentials: true }
+        {
+          withCredentials: true,
+        }
       );
 
       navigate("/create-food");
