@@ -32,6 +32,7 @@ async function registerUser(req,res) {
 
     const token = jwt.sign({
         id:user._id,
+        role:"user",
     },process.env.JWT_SECRET)
     res.cookie("token",token);
     res.status(201).json({
@@ -64,6 +65,7 @@ async function loginUser(req,res) {
      }
     const token = jwt.sign({
         id:user._id,
+        role:"user",
     },process.env.JWT_SECRET)
     res.cookie("token",token);
     res.status(201).json({
@@ -104,7 +106,8 @@ async function registerFoodPartner(req,res) {
     })
 
     const token = jwt.sign({
-        id:foodpartner._id
+        id:foodpartner._id,
+        role:"partner"
     },process.env.JWT_SECRET)
     res.cookie("token",token)
     res.status(201).json({
@@ -140,6 +143,7 @@ async function loginFoodPartner(req,res) {
      }
     const token = jwt.sign({
         id:foodpartner._id,
+        role:"partner"
     },process.env.JWT_SECRET)
     res.cookie("token",token);
     res.status(201).json({
@@ -174,6 +178,31 @@ async function getFoodPartner(req, res) {
     });
 }
 
+const getSession = async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const role = decoded.role || (
+        await userModel.exists({ _id: decoded.id })
+            ? "user"
+            : await foodpartnerModel.exists({ _id: decoded.id })
+                ? "partner"
+                : null
+    );
+
+    if (!role) {
+        return res.status(401).json({ message: "Account not found" });
+    }
+
+    res.status(200).json({
+        message: "Session retrieved successfully",
+        userId: decoded.id,
+        role,
+    });
+};
+
 module.exports = {
     registerUser,
     loginUser,
@@ -181,5 +210,6 @@ module.exports = {
     registerFoodPartner,
     loginFoodPartner,
     logoutFoodPartner,
-    getFoodPartner
+    getFoodPartner,
+    getSession,
 }

@@ -12,4 +12,6 @@ router.post('/foodpartner/login',authController.loginFoodPartner)
 router.get('/foodpartner/logout',authController.logoutFoodPartner)
 router.get('/foodpartner/:id',authController.getFoodPartner)
 
+router.get('/session',authController.getSession)
+
 module.exports = router
