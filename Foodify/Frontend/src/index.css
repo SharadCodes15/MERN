@@ -1,72 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Playwrite+BE+WAL+Guides&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 /*  Create food */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root {
-  /* Surface & Backgrounds */
-  --bg-canvas: #f8faf9;
-  --bg-surface: #ffffff;
-  --bg-muted: #f0f3f1;
-  --bg-active: #e3e8e5;
 
-  /* Text & Contrast */
-  --text-main: #131715;
-  --text-muted: #626c66;
-  --text-subtle: #8a968f;
-
-  /* Borders & Rules */
-  --border-subtle: #e2e8e4;
-  --border-strong: #131715;
-
-  /* Brand Accents */
-  --primary: #0e3b2e;             /* Deep Forest Green */
-  --primary-hover: #155442;
-  --primary-foreground: #ffffff;
-
-  --partner-primary: #d94826;     /* Terracotta Warm Spice */
-  --partner-hover: #b83a1b;
-  --partner-foreground: #ffffff;
-
-  /* Inputs & Rings */
-  --ring-focus: rgba(14, 59, 46, 0.18);
-  --ring-partner-focus: rgba(217, 72, 38, 0.2);
-
-  /* Elevation */
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px -2px rgba(0, 0, 0, 0.02);
+@font-face {
+  font-family: "Gilroy";
+  src: local("Gilroy"), local("Gilroy-Regular");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-canvas: #0d100f;
-    --bg-surface: #141816;
-    --bg-muted: #1c221f;
-    --bg-active: #242c28;
+@theme {
+  --font-sans: "Gilroy", "Manrope", sans-serif;
+  --font-serif: "Gilroy", "Manrope", sans-serif;
+  --font-display: "Gilroy", "Manrope", sans-serif;
+  --font-ui: "Gilroy", "Manrope", sans-serif;
+}
 
-    --text-main: #f0f4f1;
-    --text-muted: #9ba7a0;
-    --text-subtle: #67726b;
-
-    --border-subtle: #252e29;
-    --border-strong: #f0f4f1;
-
-    --primary: #34d399;
-    --primary-hover: #4ade80;
-    --primary-foreground: #092119;
-
-    --partner-primary: #f87171;
-    --partner-hover: #fb7185;
-    --partner-foreground: #2b0c05;
-
-    --ring-focus: rgba(52, 211, 153, 0.25);
-    --ring-partner-focus: rgba(248, 113, 113, 0.25);
-
-    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.3), 0 10px 24px -4px rgba(0, 0, 0, 0.4);
-  }
+:root {
+  color-scheme: light;
+  --brand-orange: #FF5200;
+  --brand-orange-hover: #E64A00;
+  --bg-canvas: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-muted: #fff4ef;
+  --bg-active: #ffe1d4;
+  --text-main: #000000;
+  --text-muted: #333333;
+  --text-subtle: #666666;
+  --border-subtle: #eee3dd;
+  --border-strong: #000000;
+  --primary: #FF5200;
+  --primary-hover: #E64A00;
+  --primary-foreground: #000000;
+  --partner-primary: #FF5200;
+  --partner-hover: #E64A00;
+  --partner-foreground: #000000;
+  --ring-focus: rgba(255, 82, 0, 0.2);
+  --ring-partner-focus: rgba(255, 82, 0, 0.2);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px -2px rgba(0, 0, 0, 0.02);
 }
 
 /* @import "./variables.css"; */
@@ -76,16 +52,10 @@ body {
   margin: 0;
   background-color: var(--bg-canvas);
   color: var(--text-main);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
-  /* font-family: 'Inter', sans-serif; */
-    font-family: "Noto Sans", sans-serif;
-  font-optical-sizing: auto;
+  font-family: "Gilroy", "Manrope", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings:
-    "wdth" 100;
-
 }
 
 .reels-feed {
@@ -316,13 +286,22 @@ body {
 ========================================================= */
 
 html {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Gilroy", "Manrope", sans-serif;
 }
 
-.font-serif {
-  font-family: "DM Serif Display", serif;
+.font-serif,
+.font-display,
+.font-ui,
+.Navicon {
+  font-family: "Gilroy", "Manrope", sans-serif;
 }
 
+#root [class~="min-h-screen"],
+#root [class~="h-screen"],
+#root [class*="min-h-[100dvh]"] {
+  background-color: #ffffff !important;
+  color: #000000;
+}
 
 /* =========================================================
    CRAVE INPUT

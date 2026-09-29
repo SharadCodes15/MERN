@@ -362,10 +362,6 @@ export default function CreateFood() {
             {/* DATE / WELCOME */}
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#817e9c]">
-                  PARTNER DASHBOARD
-                </p>
-
                 <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#29234f] sm:text-3xl">
                   Good food starts here.
                 </h1>
@@ -387,10 +383,6 @@ export default function CreateFood() {
             <section className="relative mb-9 min-h-[150px] overflow-hidden rounded-[26px] bg-[#dbe5ff] px-6 py-7 shadow-sm sm:px-8">
 
               <div className="relative z-10 max-w-[520px]">
-                <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-[#716b92]">
-                  CRAVE Partner
-                </p>
-
                 <h2 className="text-2xl font-bold leading-tight text-[#29234f] sm:text-3xl">
                   Turn your best dishes
                   <br />
@@ -423,11 +415,7 @@ export default function CreateFood() {
 
               <div className="mb-4 flex items-end justify-between">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8c88a3]">
-                    Your menu
-                  </p>
-
-                  <h2 className="mt-1 text-xl font-bold text-[#29234f]">
+                  <h2 className="text-xl font-bold text-[#29234f]">
                     Popular this week
                   </h2>
                 </div>
@@ -476,11 +464,7 @@ export default function CreateFood() {
 
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8c88a3]">
-                    Partner profile
-                  </p>
-
-                  <h2 className="mt-1 text-xl font-bold text-[#29234f]">
+                  <h2 className="text-xl font-bold text-[#29234f]">
                     Your kitchen
                   </h2>
                 </div>
@@ -667,11 +651,7 @@ export default function CreateFood() {
             {/* Modal Header */}
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8a86a1]">
-                  Menu Desk
-                </p>
-
-                <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#29234f]">
+                <h2 className="text-2xl font-bold tracking-tight text-[#29234f]">
                   Publish new dish
                 </h2>
 

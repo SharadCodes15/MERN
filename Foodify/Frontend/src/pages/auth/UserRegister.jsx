@@ -231,10 +231,6 @@ export default function UserRegister() {
                 backdrop-blur-md
               "
             >
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-black/50">
-                Join the table
-              </p>
-
               <p className="text-xs font-black text-black">
                 Good food awaits
               </p>
@@ -268,10 +264,6 @@ export default function UserRegister() {
           {/* BRAND TEXT */}
 
           <div className="absolute bottom-8 left-10 z-20">
-
-            <p className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-black/60">
-              Join CRAVE.
-            </p>
 
             <h2 className="text-4xl font-black leading-[0.9] tracking-[-0.05em] text-black xl:text-5xl">
               Find your
@@ -345,16 +337,6 @@ export default function UserRegister() {
             {/* HEADER */}
 
             <div className="mb-6">
-
-              <div className="mb-3 flex items-center gap-3">
-
-                <span className="h-2 w-2 rounded-full bg-orange-600" />
-
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-black/50">
-                  New Member
-                </p>
-
-              </div>
 
               <h1 className="text-4xl font-black tracking-[-0.05em] text-black md:text-[42px]">
                 Join CRAVE.

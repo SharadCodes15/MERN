@@ -242,9 +242,6 @@ export default function PartnerRegister() {
               <div className="mb-3 flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-orange-500" />
 
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">
-                  Partner network
-                </span>
               </div>
 
               <h2 className="text-3xl font-black leading-none tracking-[-0.04em] text-white">
@@ -326,9 +323,6 @@ export default function PartnerRegister() {
                 CRAVE.
               </Link>
 
-              <span className="rounded-full bg-black px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.15em] text-white">
-                Partner
-              </span>
 
             </div>
 
@@ -340,16 +334,6 @@ export default function PartnerRegister() {
             <div className="mb-6">
 
               <div className="mb-4 flex items-center justify-between">
-
-                <div className="flex items-center gap-2">
-
-                  <span className="h-2 w-2 rounded-full bg-orange-600" />
-
-                  <span className="text-[10px] font-black uppercase tracking-[0.25em] text-black/50">
-                    Partner onboarding
-                  </span>
-
-                </div>
 
                 <span className="font-mono text-[10px] font-bold text-black/30">
                   STEP 01 / 02

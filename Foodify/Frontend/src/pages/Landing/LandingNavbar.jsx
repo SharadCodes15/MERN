@@ -183,9 +183,6 @@ const LandingNavbar = () => {
                 }}
               >
                 <div className="relative z-10">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/70">
-                    For food lovers
-                  </p>
                   <h2 id="join-title" className="mt-2 text-3xl font-black">
                     Join as a User
                   </h2>
@@ -216,9 +213,6 @@ const LandingNavbar = () => {
                 }}
               >
                 <div className="relative z-10">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/70">
-                    For kitchen partners
-                  </p>
                   <h2 className="mt-2 text-3xl font-black">
                     Join as a Partner
                   </h2>

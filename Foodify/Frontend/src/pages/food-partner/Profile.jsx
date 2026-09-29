@@ -966,10 +966,6 @@ export default function Profile() {
                                         </div>
 
                                         <div>
-                                            <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-[#b09b88]">
-                                                About the partner
-                                            </p>
-
                                             <h2 className="mt-1 font-display text-[29px] leading-none text-[#30241c]">
                                                 {partner.name}
                                             </h2>
@@ -1076,18 +1072,11 @@ export default function Profile() {
                         >
                             <div className="flex items-end justify-between">
                                 <div>
-                                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#ad9986]">
-                                        Watch the kitchen
-                                    </p>
-
-                                    <h2 className="mt-1 font-display text-[32px] leading-none text-[#33261d]">
+                                    <h2 className="font-display text-[32px] leading-none text-[#33261d]">
                                         Latest Reels
                                     </h2>
                                 </div>
 
-                                <span className="hidden text-[10px] font-semibold text-[#a08d7d] sm:block">
-                                    Fresh from {partner.name}
-                                </span>
                             </div>
 
                             {foods.length > 0 ? (
@@ -1137,18 +1126,10 @@ export default function Profile() {
                         >
                             <div className="flex items-end justify-between">
                                 <div>
-                                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#ad9986]">
-                                        Discover
-                                    </p>
-
-                                    <h2 className="mt-1 font-display text-[32px] leading-none text-[#33261d]">
+                                    <h2 className="font-display text-[32px] leading-none text-[#33261d]">
                                         Menu Category
                                     </h2>
                                 </div>
-
-                                <span className="hidden text-[10px] font-semibold text-[#a08d7d] sm:block">
-                                    Choose what you crave
-                                </span>
                             </div>
 
                             <div
@@ -1253,11 +1234,7 @@ export default function Profile() {
                         >
                             <div className="mb-5 flex items-end justify-between">
                                 <div>
-                                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#ad9986]">
-                                        From the kitchen
-                                    </p>
-
-                                    <h2 className="mt-1 font-display text-[34px] leading-none text-[#33261d]">
+                                    <h2 className="font-display text-[34px] leading-none text-[#33261d]">
                                         Latest Food
                                     </h2>
                                 </div>

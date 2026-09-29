@@ -187,10 +187,6 @@ export default function UserLogin() {
                 backdrop-blur-md
               "
             >
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/50">
-                Today's craving
-              </p>
-
               <p className="text-sm font-black text-black">
                 Freshly made
               </p>
@@ -223,10 +219,6 @@ export default function UserLogin() {
           {/* Bottom text */}
 
           <div className="absolute bottom-8 left-10 z-20">
-            <p className="mb-2 text-xs font-black uppercase tracking-[0.3em] text-black/60">
-              Welcome to CRAVE.
-            </p>
-
             <h2 className="text-4xl font-black leading-[0.9] tracking-[-0.05em] text-black xl:text-5xl">
               Good food.
               <br />
@@ -278,14 +270,6 @@ export default function UserLogin() {
             {/* Heading */}
 
             <div className="mb-8">
-              <div className="mb-4 flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-orange-600" />
-
-                <p className="text-xs font-black uppercase tracking-[0.25em] text-black/50">
-                  Personal Member
-                </p>
-              </div>
-
               <h1 className="text-4xl font-black tracking-[-0.05em] text-black md:text-5xl">
                 Welcome back.
               </h1>

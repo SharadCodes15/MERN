@@ -79,9 +79,6 @@ export default function PartnerLogin() {
               CRAVE<span className="text-orange-500">.</span>
             </Link>
 
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
-              For Food Partners
-            </p>
           </div>
 
           <div className="pointer-events-none absolute -bottom-4 -left-3 z-0 select-none text-[8vw] font-black leading-[0.75] tracking-[-0.08em] text-white/[0.14]">
@@ -103,9 +100,6 @@ export default function PartnerLogin() {
             <div className="absolute bottom-6 left-6 right-6">
               <div className="mb-3 flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-orange-500" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">
-                  Merchant Network
-                </span>
               </div>
 
               <h2 className="max-w-sm text-3xl font-black leading-[0.95] tracking-tight">
@@ -123,9 +117,6 @@ export default function PartnerLogin() {
 
           {/* Bottom status */}
           <div className="absolute bottom-7 left-8 right-8">
-            <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/30">
-              CRAVE Partner Portal
-            </span>
           </div>
         </section>
 
@@ -145,14 +136,6 @@ export default function PartnerLogin() {
 
             {/* Header */}
             <div className="mb-8">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.035] px-3 py-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-
-                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-black/50">
-                  Merchant Desk
-                </span>
-              </div>
-
               <h1 className="text-4xl font-black tracking-[-0.04em] text-black md:text-5xl">
                 Welcome back.
               </h1>

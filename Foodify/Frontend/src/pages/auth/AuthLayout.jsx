@@ -1,9 +1,7 @@
 export default function AuthLayout({
   children,
-  badgeText = "Customer Access",
   headline = "Real food, from kitchens near you.",
   description = "Connect directly with neighbourhood cooks, artisan bakers, and independent dining houses.",
-  quoteAuthor = "Seasonal Kitchen Digest",
   partnerMode = false,
 }) {
   return (
@@ -25,22 +23,6 @@ export default function AuthLayout({
         >
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2">
-              <span
-                className={`h-2.5 w-2.5 rounded-full ${
-                  partnerMode ? "bg-orange-500" : "bg-black"
-                }`}
-              />
-
-              <span
-                className={`text-[10px] font-black uppercase tracking-[0.18em] ${
-                  partnerMode ? "text-white/60" : "text-black/60"
-                }`}
-              >
-                {badgeText}
-              </span>
-            </div>
-
             {/* Headline */}
             <div className="mt-16 space-y-4">
               <h2
@@ -77,13 +59,6 @@ export default function AuthLayout({
               “Crafted with respect for real ingredients and human scale.”
             </p>
 
-            <p
-              className={`mt-2 text-[10px] font-black uppercase tracking-[0.15em] ${
-                partnerMode ? "text-white/30" : "text-black/35"
-              }`}
-            >
-              — {quoteAuthor}
-            </p>
           </div>
         </section>
 
