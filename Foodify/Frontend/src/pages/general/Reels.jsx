@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import ReelActions from "./ReelActions";
 
@@ -54,15 +54,15 @@ function ReelCard({ video, active, shouldRenderVideo, onLike, onSave }) {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/85 to-transparent" />
 
       <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-gradient-to-b from-black/65 to-transparent px-5 pb-8 pt-5 text-white">
-        <div className="flex items-center gap-3">
+        <Link to={`/food-partner/${video.foodpartner}`} className="flex min-w-0 items-center gap-3 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
           <div className="grid h-9 w-9 place-items-center rounded-full border-2 border-white bg-[#f6ad3d] text-xs font-black">
             {video.name?.charAt(0)?.toUpperCase() || "F"}
           </div>
-          <div>
-            <p className="text-xs font-black">{video.name}</p>
+          <div className="min-w-0">
+            <p className="max-w-40 truncate text-xs font-black">{video.name}</p>
             <p className="text-[10px] font-medium text-white/65">Food partner</p>
           </div>
-        </div>
+        </Link>
         <button type="button" className="rounded-full border border-white/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-white transition hover:bg-white hover:text-black">
           Follow
         </button>
@@ -73,6 +73,9 @@ function ReelCard({ video, active, shouldRenderVideo, onLike, onSave }) {
       <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-8 pr-24 text-white sm:px-10 sm:pb-12">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-white/65">{video.name}</p>
         <p className="mt-2 max-w-lg text-sm leading-6 text-white/85">{video.description || "Fresh from the kitchen."}</p>
+        <Link to={`/food-partner/${video.foodpartner}`} className="mt-3 inline-flex min-h-10 items-center rounded-full bg-white px-4 text-xs font-black text-[#211914] transition hover:bg-[#f6ad3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+          Visit store
+        </Link>
       </div>
     </article>
   );
