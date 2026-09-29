@@ -53,19 +53,18 @@ export default function UserLogin() {
   };
 
   return (
-    <main className="h-[100dvh] overflow-x-hidden overflow-y-hidden bg-[#f4ad32] p-3 md:p-5">
+    <main className="min-h-[100dvh] overflow-x-hidden overflow-y-auto bg-[#f4ad32] p-3 md:p-5">
       <div
         className="
           flex
-          h-full
-          min-h-0
+          min-h-[calc(100dvh-24px)]
           overflow-hidden
           rounded-[36px]
           border
           border-black/10
           bg-[#fffaf3]
           shadow-[0_24px_80px_rgba(66,34,10,0.24)]
-          md:min-h-0
+          md:min-h-[calc(100dvh-40px)]
         "
       >
         {/* ================= LEFT ================= */}

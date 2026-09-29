@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { RiBookmarkFill, RiBookmarkLine, RiHeart3Fill, RiHeart3Line, RiMoreLine, RiPlayCircleLine, RiShareForwardLine } from "@remixicon/react";
+import { RiAddLine, RiBookmarkFill, RiBookmarkLine, RiCloseLine, RiHeart3Fill, RiHeart3Line, RiMoreLine, RiPlayCircleLine, RiShareForwardLine, RiShoppingBag3Line, RiSubtractLine } from "@remixicon/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -36,7 +36,7 @@ function Story({ video, index }) {
   );
 }
 
-function FoodPost({ video, onLike, onSave }) {
+function FoodPost({ video, cartQuantity, onAdd, onLike, onSave }) {
   const [playing, setPlaying] = useState(false);
   const likes = video.likes ?? video.likeCount ?? 0;
   const saves = video.saves ?? video.saveCount ?? 0;
@@ -67,19 +67,64 @@ function FoodPost({ video, onLike, onSave }) {
             <button type="button" aria-label="Share food" className="text-[#46352c]"><RiShareForwardLine size={22} /></button>
             <button type="button" onClick={onSave} disabled={video.savePending} aria-label="Save food" className={video.saved ? "text-[#df571e]" : "text-[#46352c]"}>{video.saved ? <RiBookmarkFill size={22} /> : <RiBookmarkLine size={22} />}</button>
           </div>
-          <span className="rounded-full bg-[#fff0df] px-3 py-1 text-[10px] font-black text-[#df571e]">${(4.92).toFixed(2)}</span>
+          <span className="rounded-full bg-[#fff0df] px-3 py-1 text-[10px] font-black text-[#df571e]">${Number(video.price ?? 4.92).toFixed(2)}</span>
         </div>
         <p className="mt-2 text-[11px] font-black text-[#38291f]">{likes} likes · {saves} saves</p>
         <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#8b7a6d]">{video.description || "A delicious dish prepared fresh by an independent kitchen."}</p>
+        <button type="button" onClick={onAdd} className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#e85d26] px-4 text-xs font-black text-white transition hover:bg-[#c94a1d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e85d26]">
+          <RiShoppingBag3Line size={17} />
+          {cartQuantity ? `Add another · ${cartQuantity} in cart` : "Add to cart"}
+        </button>
       </div>
     </article>
   );
 }
 
+function CartContents({ items, onChangeQuantity, onClose }) {
+  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
+  const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  return (
+    <>
+      <div className="flex items-center justify-between border-b border-[#eee4da] pb-4">
+        <div>
+          <h2 className="font-serif text-xl font-black">Your cart</h2>
+          <p className="mt-1 text-[11px] text-[#917f72]">{itemCount} {itemCount === 1 ? "item" : "items"}</p>
+        </div>
+        {onClose && <button type="button" onClick={onClose} aria-label="Close cart" className="grid h-9 w-9 place-items-center rounded-full text-[#75675e] hover:bg-[#f8f1e9]"><RiCloseLine size={21} /></button>}
+      </div>
+      {items.length === 0 ? (
+        <div className="grid flex-1 place-items-center py-10 text-center">
+          <div><RiShoppingBag3Line className="mx-auto text-[#c3b2a4]" size={30} /><p className="mt-3 text-sm font-bold">Your cart is waiting</p><p className="mt-1 text-xs text-[#917f72]">Add a dish from the feed to get started.</p></div>
+        </div>
+      ) : (
+        <div className="flex-1 divide-y divide-[#eee4da] overflow-y-auto">
+          {items.map((item) => (
+            <div key={item._id} className="flex items-center gap-3 py-4">
+              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#fff0df] text-sm font-black text-[#df571e]">{item.name?.charAt(0)?.toUpperCase() || "F"}</div>
+              <div className="min-w-0 flex-1"><p className="truncate text-xs font-black">{item.name}</p><p className="mt-1 text-[11px] text-[#917f72]">${item.price.toFixed(2)} each</p></div>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => onChangeQuantity(item._id, -1)} aria-label={`Remove one ${item.name}`} className="grid h-7 w-7 place-items-center rounded-full border border-[#eadfd5] text-[#75675e] hover:bg-[#f8f1e9]"><RiSubtractLine size={15} /></button>
+                <span className="w-4 text-center text-xs font-black">{item.quantity}</span>
+                <button type="button" onClick={() => onChangeQuantity(item._id, 1)} aria-label={`Add one ${item.name}`} className="grid h-7 w-7 place-items-center rounded-full border border-[#eadfd5] text-[#75675e] hover:bg-[#f8f1e9]"><RiAddLine size={15} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="border-t border-[#eee4da] pt-4">
+        <div className="flex items-center justify-between text-sm"><span className="font-bold">Subtotal</span><span className="font-black">${subtotal.toFixed(2)}</span></div>
+      </div>
+    </>
+  );
+}
+
 export default function Home() {
   const [videos, setVideos] = useState([]);
+  const [cart, setCart] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const pageRef = useRef(null);
   const navigate = useNavigate();
 
@@ -131,6 +176,23 @@ export default function Home() {
 
   const updateVideo = (videoId, changes) => setVideos((current) => current.map((video) => video._id === videoId ? { ...video, ...changes } : video));
 
+  const handleAddToCart = (video) => {
+    const price = Number(video.price ?? 4.92);
+    setCart((current) => {
+      const existing = current.find((item) => item._id === video._id);
+      if (existing) return current.map((item) => item._id === video._id ? { ...item, quantity: item.quantity + 1 } : item);
+      return [...current, { _id: video._id, name: video.name, price: Number.isFinite(price) ? price : 4.92, quantity: 1 }];
+    });
+  };
+
+  const handleChangeCartQuantity = (videoId, change) => {
+    setCart((current) => current.flatMap((item) => {
+      if (item._id !== videoId) return [item];
+      const quantity = item.quantity + change;
+      return quantity > 0 ? [{ ...item, quantity }] : [];
+    }));
+  };
+
   const handleLike = async (videoId) => {
     const video = videos.find((item) => item._id === videoId);
     if (!video || video.likePending) return;
@@ -171,10 +233,12 @@ export default function Home() {
         <section className="mb-8"><div className="mb-4 flex items-end justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b19887]">Find your craving</p><h2 className="font-serif text-3xl font-black">Explore cuisines</h2></div></div><div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">{categoryNames.map((category) => <button key={category} type="button" onClick={() => setActiveCategory(category)} className={`shrink-0 rounded-full border px-4 py-2 text-xs font-black transition ${activeCategory === category ? "border-[#e85d26] bg-[#e85d26] text-white" : "border-[#e5d9cf] bg-white text-[#806e61] hover:border-[#f6ad3d]"}`}>{category}</button>)}</div></section>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-          <section data-home-feed><div className="mb-4 flex items-end justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b19887]">From the feed</p><h2 className="font-serif text-3xl font-black">Trending bites</h2></div><span className="text-xs font-bold text-[#9b887a]">{visibleVideos.length} stories</span></div><div className="grid gap-5 md:grid-cols-2">{visibleVideos.map((video) => <div data-home-card key={video._id}><FoodPost video={video} onLike={() => handleLike(video._id)} onSave={() => handleSave(video._id)} /></div>)}</div>{visibleVideos.length === 0 && <div className="rounded-2xl border border-dashed border-[#dfd0c4] bg-white p-12 text-center text-sm text-[#907d70]">No dishes found in this cuisine yet.</div>}</section>
-          <aside className="hidden h-fit rounded-[22px] border border-[#eadfd5] bg-white p-5 lg:block"><div className="flex items-center justify-between"><h3 className="font-serif text-xl font-black">Your table</h3><span className="rounded-full bg-[#fff0df] px-2 py-1 text-[9px] font-black text-[#df571e]">NEW</span></div><div className="mt-5 rounded-2xl bg-[#f8f1e9] p-4"><p className="text-xs font-black">Hungry for a story?</p><p className="mt-1 text-[11px] leading-5 text-[#917f72]">Save dishes you love and find them again when the craving returns.</p><Link to="/saved" className="mt-4 inline-flex text-[10px] font-black uppercase tracking-[0.14em] text-[#df571e]">Open saved</Link></div><div className="mt-6 border-t border-[#eee4da] pt-5"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#b19887]">Fresh today</p><p className="mt-2 font-serif text-2xl font-black">{videos.length}</p><p className="text-[11px] text-[#917f72]">food stories waiting to be discovered</p></div></aside>
+          <section data-home-feed><div className="mb-4 flex items-end justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b19887]">From the feed</p><h2 className="font-serif text-3xl font-black">Trending bites</h2></div><span className="text-xs font-bold text-[#9b887a]">{visibleVideos.length} stories</span></div><div className="grid gap-5 md:grid-cols-2">{visibleVideos.map((video) => <div data-home-card key={video._id}><FoodPost video={video} cartQuantity={cart.find((item) => item._id === video._id)?.quantity ?? 0} onAdd={() => handleAddToCart(video)} onLike={() => handleLike(video._id)} onSave={() => handleSave(video._id)} /></div>)}</div>{visibleVideos.length === 0 && <div className="rounded-2xl border border-dashed border-[#dfd0c4] bg-white p-12 text-center text-sm text-[#907d70]">No dishes found in this cuisine yet.</div>}</section>
+          <aside className="sticky top-6 hidden h-[calc(100dvh-3rem)] max-h-[720px] flex-col rounded-[22px] border border-[#eadfd5] bg-white p-5 lg:flex"><CartContents items={cart} onChangeQuantity={handleChangeCartQuantity} /></aside>
         </div>
       </main>
+      <button type="button" onClick={() => setCartOpen(true)} aria-label={`Open cart, ${cart.reduce((total, item) => total + item.quantity, 0)} items`} className="fixed bottom-5 right-5 z-40 flex min-h-12 items-center gap-2 rounded-full bg-[#2f211a] px-5 text-xs font-black text-white shadow-[0_10px_30px_rgba(47,33,26,0.3)] transition hover:bg-[#493326] lg:hidden"><RiShoppingBag3Line size={18} />Cart<span className="grid h-6 min-w-6 place-items-center rounded-full bg-[#e85d26] px-1 text-[10px]">{cart.reduce((total, item) => total + item.quantity, 0)}</span></button>
+      {cartOpen && <div className="fixed inset-0 z-50 lg:hidden"><button type="button" onClick={() => setCartOpen(false)} aria-label="Close cart" className="absolute inset-0 bg-black/40" /><aside className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white p-5 shadow-2xl"><CartContents items={cart} onChangeQuantity={handleChangeCartQuantity} onClose={() => setCartOpen(false)} /></aside></div>}
     </div>
   );
 }

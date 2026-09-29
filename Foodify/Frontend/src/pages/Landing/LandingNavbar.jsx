@@ -1,19 +1,52 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
+import { RiLogoutBoxLine, RiUser3Line } from "@remixicon/react";
 import { Link } from "react-router-dom";
 
 const LandingNavbar = () => {
   const [isJoinOpen, setIsJoinOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
   useEffect(() => {
+    let active = true;
+
+    axios
+      .get("/api/auth/session", { withCredentials: true })
+      .then(({ data }) => {
+        const role = data.role || data.user?.role || data.account?.role || data.userType;
+        if (active) setIsLoggedIn(role === "user");
+      })
+      .catch(() => {
+        if (active) setIsLoggedIn(false);
+      });
+
     const handleEscape = (event) => {
       if (event.key === "Escape") {
         setIsJoinOpen(false);
+        setIsUserMenuOpen(false);
       }
     };
 
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    return () => {
+      active = false;
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
+
+  const handleLogout = async () => {
+    setLogoutError("");
+    try {
+      await axios.get("/api/auth/user/logout", { withCredentials: true });
+      setIsLoggedIn(false);
+      setIsUserMenuOpen(false);
+    } catch (error) {
+      console.error("Failed to log out:", error);
+      setLogoutError("Logout failed. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -79,24 +112,42 @@ const LandingNavbar = () => {
           </Link>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsJoinOpen(true)}
-          className="
-            rounded-full
-            bg-black
-            px-5
-            py-2
-            text-white
-            transition-all
-            duration-300
-            hover:scale-105
-            hover:bg-white
-            hover:text-black
-          "
-        >
-          Join
-        </button>
+        {isLoggedIn ? (
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsUserMenuOpen((open) => !open)}
+              aria-label="Open account menu"
+              aria-expanded={isUserMenuOpen}
+              className="grid h-10 w-10 place-items-center rounded-full bg-black text-white transition hover:bg-white hover:text-black"
+            >
+              <RiUser3Line size={21} />
+            </button>
+            {isUserMenuOpen && (
+              <div className="absolute right-0 top-full z-[60] mt-3 w-52 rounded-xl border border-black/10 bg-white p-2 text-black shadow-xl" role="menu">
+                <p className="px-3 py-2 text-xs font-semibold text-black/50">Your account</p>
+                {logoutError && <p className="px-3 pb-2 text-xs text-red-700" role="alert">{logoutError}</p>}
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={handleLogout}
+                  className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold transition hover:bg-amber-50"
+                >
+                  <RiLogoutBoxLine size={18} />
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsJoinOpen(true)}
+            className="rounded-full bg-black px-5 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-white hover:text-black"
+          >
+            Join
+          </button>
+        )}
       </nav>
 
       {isJoinOpen && (

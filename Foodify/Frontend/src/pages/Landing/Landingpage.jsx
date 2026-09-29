@@ -1,5 +1,4 @@
 import React, { useRef, useLayoutEffect } from "react";
-import LandingNavbar from "./LandingNavbar";
 import VideoSection from "./VideoSection";
 import HeroLand from "./HeroLand";
 import Lenis from "lenis";

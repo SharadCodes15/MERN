@@ -9,7 +9,7 @@ const FoodCard = ({
   rating = "4.8",
 }) => {
   return (
-    <article className="group flex h-[560px] w-[400px] shrink-0 flex-col rounded-[32px] bg-[#f4eee8] p-4 shadow-xl">
+    <article className="group flex h-[560px] w-[calc(100vw-2rem)] max-w-[400px] shrink-0 flex-col rounded-[32px] bg-[#f4eee8] p-4 shadow-xl">
 
       {/* Image */}
       <div className="relative h-[310px] w-full overflow-hidden rounded-[24px] bg-[#e5ddd5]">
@@ -43,7 +43,7 @@ const FoodCard = ({
 
         {/* Title + Price */}
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-3xl font-black tracking-tight text-black">
+          <h2 className="text-xl font-black leading-tight text-black sm:text-3xl">
             {title}
           </h2>
 
