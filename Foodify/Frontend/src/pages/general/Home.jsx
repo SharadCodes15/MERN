@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { RiAddLine, RiBookmarkFill, RiBookmarkLine, RiCloseLine, RiHeart3Fill, RiHeart3Line, RiMoreLine, RiPlayCircleLine, RiShareForwardLine, RiShoppingBag3Line, RiSubtractLine } from "@remixicon/react";
+import { RiAddLine, RiArrowRightLine, RiBookmarkFill, RiBookmarkLine, RiCloseLine, RiDeleteBinLine, RiHeart3Fill, RiHeart3Line, RiMoreLine, RiNotification3Line, RiPlayCircleLine, RiShareForwardLine, RiShoppingBag3Line, RiSubtractLine } from "@remixicon/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -80,42 +80,59 @@ function FoodPost({ video, cartQuantity, onAdd, onLike, onSave }) {
   );
 }
 
-function CartContents({ items, onChangeQuantity, onClose }) {
+function CartContents({ items, onChangeQuantity, onClear, onClose }) {
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
   const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0);
+  const formattedTotal = `$${subtotal.toFixed(2).replace(".", ",")}`;
 
   return (
-    <>
-      <div className="flex items-center justify-between border-b border-[#eee4da] pb-4">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="font-serif text-xl font-black">Your cart</h2>
-          <p className="mt-1 text-[11px] text-[#917f72]">{itemCount} {itemCount === 1 ? "item" : "items"}</p>
+          <h2 className="font-serif text-[30px] leading-none text-[#2e241d]">My Cart</h2>
+          <p className="mt-2 max-w-[205px] text-[10px] font-medium leading-4 text-[#948273]">Manage your purchases and keep track of what you spend.</p>
         </div>
-        {onClose && <button type="button" onClick={onClose} aria-label="Close cart" className="grid h-9 w-9 place-items-center rounded-full text-[#75675e] hover:bg-[#f8f1e9]"><RiCloseLine size={21} /></button>}
+        <div className="flex items-center gap-2">
+          <div aria-label={`${itemCount} cart items`} className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[#776658] shadow-sm">
+            <RiNotification3Line size={19} />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#ef704f]" />
+          </div>
+          {onClose && <button type="button" onClick={onClose} aria-label="Close cart" className="grid h-9 w-9 place-items-center rounded-full text-[#75675e] hover:bg-white"><RiCloseLine size={21} /></button>}
+        </div>
       </div>
       {items.length === 0 ? (
-        <div className="grid flex-1 place-items-center py-10 text-center">
-          <div><RiShoppingBag3Line className="mx-auto text-[#c3b2a4]" size={30} /><p className="mt-3 text-sm font-bold">Your cart is waiting</p><p className="mt-1 text-xs text-[#917f72]">Add a dish from the feed to get started.</p></div>
+        <div className="mt-7 grid flex-1 place-items-center rounded-[20px] border border-[#e4d9ce] bg-white px-5 py-10 text-center">
+          <div><RiShoppingBag3Line className="mx-auto text-[#c3b2a4]" size={30} /><p className="mt-4 text-[13px] font-extrabold text-[#463428]">Your cart is empty</p><p className="mt-1 text-[10px] font-medium text-[#a39180]">Add something delicious.</p></div>
         </div>
       ) : (
-        <div className="flex-1 divide-y divide-[#eee4da] overflow-y-auto">
+        <div className="mt-7 flex-1 space-y-3 overflow-y-auto">
           {items.map((item) => (
-            <div key={item._id} className="flex items-center gap-3 py-4">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#fff0df] text-sm font-black text-[#df571e]">{item.name?.charAt(0)?.toUpperCase() || "F"}</div>
-              <div className="min-w-0 flex-1"><p className="truncate text-xs font-black">{item.name}</p><p className="mt-1 text-[11px] text-[#917f72]">${item.price.toFixed(2)} each</p></div>
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => onChangeQuantity(item._id, -1)} aria-label={`Remove one ${item.name}`} className="grid h-7 w-7 place-items-center rounded-full border border-[#eadfd5] text-[#75675e] hover:bg-[#f8f1e9]"><RiSubtractLine size={15} /></button>
-                <span className="w-4 text-center text-xs font-black">{item.quantity}</span>
-                <button type="button" onClick={() => onChangeQuantity(item._id, 1)} aria-label={`Add one ${item.name}`} className="grid h-7 w-7 place-items-center rounded-full border border-[#eadfd5] text-[#75675e] hover:bg-[#f8f1e9]"><RiAddLine size={15} /></button>
+            <div key={item._id} className="flex items-center gap-3 rounded-[19px] border border-[#e4d9ce] bg-white p-3">
+              <div className="h-[56px] w-[56px] shrink-0 overflow-hidden rounded-[15px] bg-[#eee5dc]">
+                {item.image ? <img src={item.image} alt="" className="h-full w-full object-cover" /> : item.video ? <video src={item.video} muted autoPlay loop playsInline className="h-full w-full object-cover" /> : <div className="grid h-full place-items-center text-sm font-black text-[#df571e]">{item.name?.charAt(0)?.toUpperCase() || "F"}</div>}
+              </div>
+              <div className="min-w-0 flex-1"><p className="truncate text-[11px] font-extrabold text-[#463428]">{item.name}</p><p className="mt-1 text-[14px] font-extrabold text-[#292018]">${item.price.toFixed(2).replace(".", ",")}</p></div>
+              <div className="flex items-center gap-1">
+                <button type="button" onClick={() => onChangeQuantity(item._id, -1)} aria-label={`Remove one ${item.name}`} className="grid h-9 w-9 place-items-center rounded-xl bg-[#f4eee8] text-[#685749] hover:bg-[#e9ded3]"><RiSubtractLine size={13} /></button>
+                <span className="grid h-9 min-w-9 place-items-center rounded-xl bg-[#302432] px-2 text-[10px] font-extrabold text-white">{item.quantity}</span>
+                <button type="button" onClick={() => onChangeQuantity(item._id, 1)} aria-label={`Add one ${item.name}`} className="grid h-9 w-9 place-items-center rounded-xl bg-[#f4eee8] text-[#685749] hover:bg-[#e9ded3]"><RiAddLine size={13} /></button>
               </div>
             </div>
           ))}
         </div>
       )}
-      <div className="border-t border-[#eee4da] pt-4">
-        <div className="flex items-center justify-between text-sm"><span className="font-bold">Subtotal</span><span className="font-black">${subtotal.toFixed(2)}</span></div>
-      </div>
-    </>
+      {items.length > 0 && <>
+        <div className="mt-7 flex items-center justify-between">
+          <button type="button" onClick={onClear} aria-label="Clear cart" className="grid h-14 w-14 place-items-center rounded-2xl bg-[#302432] text-white transition hover:scale-105"><RiDeleteBinLine size={19} /></button>
+          <div className="text-right"><p className="text-[10px] font-semibold text-[#918174]">Total</p><p className="text-[25px] font-extrabold text-[#241b15]">{formattedTotal}</p></div>
+        </div>
+        <button type="button" className="relative mt-4 flex h-[62px] w-full items-center justify-center overflow-hidden rounded-[18px] bg-[#d98226] text-white shadow-[0_12px_25px_rgba(217,130,38,0.22)] transition hover:-translate-y-1">
+          <img src="/Images/TraditionalTable.jpg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+          <span className="relative z-10 text-[13px] font-extrabold">Check Out</span>
+          <RiArrowRightLine className="relative z-10 ml-2" size={17} />
+        </button>
+      </>}
+    </div>
   );
 }
 
@@ -181,7 +198,7 @@ export default function Home() {
     setCart((current) => {
       const existing = current.find((item) => item._id === video._id);
       if (existing) return current.map((item) => item._id === video._id ? { ...item, quantity: item.quantity + 1 } : item);
-      return [...current, { _id: video._id, name: video.name, price: Number.isFinite(price) ? price : 4.92, quantity: 1 }];
+      return [...current, { _id: video._id, name: video.name, price: Number.isFinite(price) ? price : 4.92, video: video.video, image: video.image, quantity: 1 }];
     });
   };
 
@@ -234,11 +251,11 @@ export default function Home() {
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
           <section data-home-feed><div className="mb-4 flex items-end justify-between"><div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#b19887]">From the feed</p><h2 className="font-serif text-3xl font-black">Trending bites</h2></div><span className="text-xs font-bold text-[#9b887a]">{visibleVideos.length} stories</span></div><div className="grid gap-5 md:grid-cols-2">{visibleVideos.map((video) => <div data-home-card key={video._id}><FoodPost video={video} cartQuantity={cart.find((item) => item._id === video._id)?.quantity ?? 0} onAdd={() => handleAddToCart(video)} onLike={() => handleLike(video._id)} onSave={() => handleSave(video._id)} /></div>)}</div>{visibleVideos.length === 0 && <div className="rounded-2xl border border-dashed border-[#dfd0c4] bg-white p-12 text-center text-sm text-[#907d70]">No dishes found in this cuisine yet.</div>}</section>
-          <aside className="sticky top-6 hidden h-[calc(100dvh-3rem)] max-h-[720px] flex-col rounded-[22px] border border-[#eadfd5] bg-white p-5 lg:flex"><CartContents items={cart} onChangeQuantity={handleChangeCartQuantity} /></aside>
+          <aside className="sticky top-0 hidden h-[calc(100dvh-2.5rem)] max-h-[820px] flex-col border-l border-[#e3d9ce] bg-[#f7f3ee] px-5 py-8 xl:px-7 lg:flex"><CartContents items={cart} onChangeQuantity={handleChangeCartQuantity} onClear={() => setCart([])} /></aside>
         </div>
       </main>
       <button type="button" onClick={() => setCartOpen(true)} aria-label={`Open cart, ${cart.reduce((total, item) => total + item.quantity, 0)} items`} className="fixed bottom-5 right-5 z-40 flex min-h-12 items-center gap-2 rounded-full bg-[#2f211a] px-5 text-xs font-black text-white shadow-[0_10px_30px_rgba(47,33,26,0.3)] transition hover:bg-[#493326] lg:hidden"><RiShoppingBag3Line size={18} />Cart<span className="grid h-6 min-w-6 place-items-center rounded-full bg-[#e85d26] px-1 text-[10px]">{cart.reduce((total, item) => total + item.quantity, 0)}</span></button>
-      {cartOpen && <div className="fixed inset-0 z-50 lg:hidden"><button type="button" onClick={() => setCartOpen(false)} aria-label="Close cart" className="absolute inset-0 bg-black/40" /><aside className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white p-5 shadow-2xl"><CartContents items={cart} onChangeQuantity={handleChangeCartQuantity} onClose={() => setCartOpen(false)} /></aside></div>}
+      {cartOpen && <div className="fixed inset-0 z-50 lg:hidden"><button type="button" onClick={() => setCartOpen(false)} aria-label="Close cart" className="absolute inset-0 bg-black/40" /><aside className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-[#f7f3ee] px-5 py-7 shadow-2xl"><CartContents items={cart} onChangeQuantity={handleChangeCartQuantity} onClear={() => setCart([])} onClose={() => setCartOpen(false)} /></aside></div>}
     </div>
   );
 }
