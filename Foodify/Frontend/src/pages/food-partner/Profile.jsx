@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { useCustomerCart } from "../general/CustomerCartStore";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -418,216 +419,6 @@ function Sidebar({ partner }) {
    CART
 ========================================================= */
 
-function CartPanel({ cartItems, updateQuantity }) {
-    const cartTotal = cartItems.reduce(
-        (total, cartItem) => total + 4.92 * cartItem.quantity,
-        0
-    );
-
-    return (
-        <aside
-            className="
-                hidden
-                w-[320px]
-                shrink-0
-                flex-col
-                border-l
-                border-[#e3d9ce]
-                bg-[#f7f3ee]
-                px-7
-                py-8
-                xl:flex
-            "
-        >
-            <div className="flex items-start justify-between">
-                <div>
-                    <h2 className="font-display text-[30px] leading-none text-[#2e241d]">
-                        My Cart
-                    </h2>
-
-                    <p className="mt-2 max-w-[205px] text-[10px] font-medium leading-4 text-[#948273]">
-                        Manage your purchases and keep track of what you
-                        spend.
-                    </p>
-                </div>
-
-                <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#776658] shadow-sm">
-                    <Icon name="bell" size={19} />
-
-                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#ef704f]" />
-                </div>
-            </div>
-
-            <div className="mt-7 space-y-3">
-                {cartItems.length === 0 ? (
-                    <div
-                        className="
-                            rounded-[20px]
-                            border
-                            border-[#e4d9ce]
-                            bg-white
-                            px-5
-                            py-10
-                            text-center
-                        "
-                    >
-                        <div className="text-3xl">🛒</div>
-
-                        <p className="mt-4 text-[13px] font-extrabold text-[#463428]">
-                            Your cart is empty
-                        </p>
-
-                        <p className="mt-1 text-[10px] font-medium text-[#a39180]">
-                            Add something delicious.
-                        </p>
-                    </div>
-                ) : (
-                    cartItems.map(({ item, quantity }) => (
-                        <div
-                            key={item._id}
-                            className="
-                                flex
-                                items-center
-                                gap-3
-                                rounded-[19px]
-                                border
-                                border-[#e4d9ce]
-                                bg-white
-                                p-3
-                            "
-                        >
-                            <div className="h-[56px] w-[56px] shrink-0 overflow-hidden rounded-[15px] bg-[#eee5dc]">
-                                {item.video && (
-                                    <video
-                                        src={item.video}
-                                        muted
-                                        autoPlay
-                                        loop
-                                        playsInline
-                                        className="h-full w-full object-cover"
-                                    />
-                                )}
-                            </div>
-
-                            <div className="min-w-0 flex-1">
-                                <p className="truncate text-[11px] font-extrabold text-[#463428]">
-                                    {item.name}
-                                </p>
-
-                                <p className="mt-1 text-[14px] font-extrabold text-[#292018]">
-                                    $4,92
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-1">
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        updateQuantity(item._id, -1)
-                                    }
-                                    className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f4eee8] text-[#685749]"
-                                >
-                                    <Icon name="minus" size={12} />
-                                </button>
-
-                                <span className="flex h-7 min-w-7 items-center justify-center rounded-lg bg-[#302432] px-1.5 text-[10px] font-extrabold text-white">
-                                    {quantity}
-                                </span>
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        updateQuantity(item._id, 1)
-                                    }
-                                    className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f4eee8] text-[#685749]"
-                                >
-                                    <Icon name="plus" size={12} />
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-
-            {cartItems.length > 0 && (
-                <>
-                    <div className="mt-7 flex items-center justify-between">
-                        <button
-                            type="button"
-                            onClick={() =>
-                                cartItems.forEach((cartItem) =>
-                                    updateQuantity(
-                                        cartItem.item._id,
-                                        -cartItem.quantity
-                                    )
-                                )
-                            }
-                            className="
-                                flex
-                                h-[56px]
-                                w-[56px]
-                                items-center
-                                justify-center
-                                rounded-[16px]
-                                bg-[#302432]
-                                text-white
-                                transition
-                                hover:scale-105
-                            "
-                        >
-                            <Icon name="trash" size={19} />
-                        </button>
-
-                        <div className="text-right">
-                            <p className="text-[10px] font-semibold text-[#918174]">
-                                Total
-                            </p>
-
-                            <p className="text-[25px] font-extrabold tracking-tight text-[#241b15]">
-                                ${cartTotal.toFixed(2).replace(".", ",")}
-                            </p>
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        className="
-                            relative
-                            mt-4
-                            flex
-                            h-[62px]
-                            w-full
-                            items-center
-                            justify-center
-                            overflow-hidden
-                            rounded-[18px]
-                            bg-[#d98226]
-                            text-white
-                            shadow-[0_12px_25px_rgba(217,130,38,0.22)]
-                            transition
-                            hover:-translate-y-1
-                        "
-                    >
-                        <img
-                            src="/Images/TraditionalTable.jpg"
-                            alt=""
-                            className="absolute inset-0 h-full w-full object-cover opacity-40"
-                        />
-
-                        <span className="relative z-10 text-[13px] font-extrabold">
-                            Check Out
-                        </span>
-
-                        <span className="relative z-10 ml-2">
-                            <Icon name="arrow" size={17} />
-                        </span>
-                    </button>
-                </>
-            )}
-        </aside>
-    );
-}
-
 /* =========================================================
    PROFILE
 ========================================================= */
@@ -641,7 +432,7 @@ export default function Profile() {
     const [foods, setFoods] = useState([]);
     const [partner, setPartner] = useState(fallbackPartner);
     const [loading, setLoading] = useState(true);
-    const [cartItems, setCartItems] = useState([]);
+    const { addItem } = useCustomerCart();
     const [activeCategory, setActiveCategory] = useState("All");
 
     /* =====================================================
@@ -743,55 +534,6 @@ export default function Profile() {
        CART
     ===================================================== */
 
-    const addToCart = (item) => {
-        setCartItems((currentItems) => {
-            const existingItem = currentItems.find(
-                (cartItem) =>
-                    cartItem.item._id === item._id
-            );
-
-            if (existingItem) {
-                return currentItems.map((cartItem) =>
-                    cartItem.item._id === item._id
-                        ? {
-                              ...cartItem,
-                              quantity:
-                                  cartItem.quantity + 1,
-                          }
-                        : cartItem
-                );
-            }
-
-            return [
-                ...currentItems,
-                {
-                    item,
-                    quantity: 1,
-                },
-            ];
-        });
-    };
-
-    const updateQuantity = (itemId, change) => {
-        setCartItems((currentItems) =>
-            currentItems
-                .map((cartItem) =>
-                    cartItem.item._id === itemId
-                        ? {
-                              ...cartItem,
-                              quantity:
-                                  cartItem.quantity +
-                                  change,
-                          }
-                        : cartItem
-                )
-                .filter(
-                    (cartItem) =>
-                        cartItem.quantity > 0
-                )
-        );
-    };
-
     /* =====================================================
        GSAP + LENIS
     ===================================================== */
@@ -850,16 +592,6 @@ export default function Profile() {
                     },
                     "-=0.45"
                 )
-                .from(
-                    "[data-cart]",
-                    {
-                        x: 35,
-                        opacity: 0,
-                        duration: 0.8,
-                    },
-                    "-=0.7"
-                );
-
             /* ---------------------------------------------
                HERO TEXT
             --------------------------------------------- */
@@ -1564,7 +1296,7 @@ export default function Profile() {
                                                 }
                                                 item={item}
                                                 onAdd={
-                                                    addToCart
+                                                    addItem
                                                 }
                                             />
                                         )
@@ -1605,16 +1337,6 @@ export default function Profile() {
                     </div>
                 </main>
 
-                {/* =================================================
-                    CART
-                ================================================= */}
-
-                <div data-cart>
-                    <CartPanel
-                        cartItems={cartItems}
-                        updateQuantity={updateQuantity}
-                    />
-                </div>
             </div>
         </div>
     );

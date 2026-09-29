@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import FoodCard from "./foodCard";
+import { useCustomerCart } from "../general/CustomerCartStore";
 gsap.registerPlugin(ScrollTrigger);
 
 const items = [
@@ -51,6 +52,7 @@ const items = [
 ];
 
 const ItemDisplay = () => {
+  const { addItem } = useCustomerCart();
   const containerRef = useRef(null);
   const trackRef = useRef(null);
 
@@ -87,7 +89,7 @@ const ItemDisplay = () => {
         <div className="top-0 h-screen overflow-hidden">
           <div ref={trackRef} className="flex h-full items-center gap-5">
             {items.map((item) => (
-              <FoodCard key={item.id} {...item}/>
+              <FoodCard key={item.id} {...item} onAdd={() => addItem({ ...item, _id: `landing-${item.id}` })} />
             ))}
           </div>
         </div>

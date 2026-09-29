@@ -1,10 +1,9 @@
-import React from 'react'
-
 const FoodCard = ({
   title,
   price,
   image,
   description,
+  onAdd,
   category = "Chef's Choice",
   rating = "4.8",
 }) => {
@@ -60,6 +59,8 @@ const FoodCard = ({
         {/* Bottom */}
         <div className="mt-auto pt-5">
           <button
+            type="button"
+            onClick={onAdd}
             className="
               flex
               w-full

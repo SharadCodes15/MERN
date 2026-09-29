@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { RiShoppingBag3Line } from "@remixicon/react";
 import Navbar from "./Navbar";
 import ReelActions from "./ReelActions";
+import { useCustomerCart } from "./CustomerCartStore";
 
 const API_URL = "http://localhost:3000/api";
 
-function ReelCard({ video, active, shouldRenderVideo, onLike, onSave }) {
+function ReelCard({ video, active, shouldRenderVideo, onAddToCart, onLike, onSave }) {
   const [status, setStatus] = useState("loading");
   const videoElementRef = useRef(null);
 
@@ -73,6 +75,9 @@ function ReelCard({ video, active, shouldRenderVideo, onLike, onSave }) {
       <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-8 pr-24 text-white sm:px-10 sm:pb-12">
         <p className="text-xs font-black uppercase tracking-[0.18em] text-white/65">{video.name}</p>
         <p className="mt-2 max-w-lg text-sm leading-6 text-white/85">{video.description || "Fresh from the kitchen."}</p>
+        <button type="button" onClick={onAddToCart} className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-white px-4 text-xs font-black text-[#211914] transition hover:bg-[#f6ad3d]">
+          <RiShoppingBag3Line size={16} />Add to cart
+        </button>
         <Link to={`/food-partner/${video.foodpartner}`} className="mt-3 inline-flex min-h-10 items-center rounded-full bg-white px-4 text-xs font-black text-[#211914] transition hover:bg-[#f6ad3d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
           Visit store
         </Link>
@@ -84,6 +89,7 @@ function ReelCard({ video, active, shouldRenderVideo, onLike, onSave }) {
 export default function Reels() {
   const [videos, setVideos] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const { addItem } = useCustomerCart();
   const feedRef = useRef(null);
   const navigate = useNavigate();
 
@@ -167,6 +173,7 @@ export default function Reels() {
               video={video}
               active={index === activeIndex}
               shouldRenderVideo={Math.abs(index - activeIndex) <= 1}
+              onAddToCart={() => addItem(video)}
               onLike={() => handleLike(video._id)}
               onSave={() => handleSave(video._id)}
             />
