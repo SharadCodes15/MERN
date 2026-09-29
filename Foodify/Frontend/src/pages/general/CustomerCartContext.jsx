@@ -1,9 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomerCartContext } from "./CustomerCartStore";
 
+const CART_STORAGE_KEY = "foodify:customer-cart:v1";
+
+function readStoredItems() {
+  try {
+    const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
+    if (!storedCart) return [];
+
+    const parsedCart = JSON.parse(storedCart);
+    if (parsedCart.version !== 1 || !Array.isArray(parsedCart.items)) return [];
+
+    return parsedCart.items.filter((item) => (
+      item &&
+      typeof item._id === "string" &&
+      typeof item.name === "string" &&
+      Number.isFinite(item.price) &&
+      Number.isInteger(item.quantity) &&
+      item.quantity > 0
+    ));
+  } catch {
+    return [];
+  }
+}
+
 export function CustomerCartProvider({ children }) {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(readStoredItems);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ version: 1, items }));
+    } catch (error) {
+      console.error("Failed to persist customer cart:", error);
+    }
+  }, [items]);
 
   const addItem = (food) => {
     const normalizedPrice = Number(String(food.price ?? 4.92).replace(",", ".").replace(/[^\d.]/g, ""));
