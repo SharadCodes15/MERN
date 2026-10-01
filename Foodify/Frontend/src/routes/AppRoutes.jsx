@@ -7,7 +7,7 @@ import PartnerRegister from '../pages/auth/PartnerRegister'
 import PartnerLogin from '../pages/auth/PartnerLogin'
 import Home from '../pages/general/Home';
 import Reels from '../pages/general/Reels';
-import CreateFood from '../pages/food-partner/CreateFoodPage';
+import PartnerDashboard from '../pages/food-partner/PartnerDashboard';
 import Profile from '../pages/food-partner/Profile';
 import Saved from '../pages/general/Saved';
 import Landingpage from '../pages/Landing/Landingpage';
@@ -56,7 +56,7 @@ function PartnerOnlyRoute() {
   }
 
   if (status === 'partner') {
-    return <CreateFood />;
+    return <PartnerDashboard />;
   }
 
   return <Navigate to={status === 'user' ? '/home' : '/food-partner/login'} replace />;
