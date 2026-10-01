@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import BackToLanding from "./BackToLanding";
+import AuthLayout from "./AuthLayout";
 
-const initialRegisterState = {
+const initialFormState = {
   name: "",
   contactName: "",
   phone: "",
@@ -15,7 +15,7 @@ const initialRegisterState = {
 export default function PartnerRegister() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState(initialRegisterState);
+  const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,6 +26,8 @@ export default function PartnerRegister() {
       ...prev,
       [name]: value,
     }));
+
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -45,11 +47,9 @@ export default function PartnerRegister() {
 
     try {
       await axios.post(
-        "http://localhost:3000/api/auth/foodpartner/register",
+        "/api/auth/foodpartner/register",
         payload,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       navigate("/create-food");
@@ -58,720 +58,247 @@ export default function PartnerRegister() {
 
       setError(
         err.response?.data?.message ||
-          "We couldn't submit your application. Please check your details."
+          "Unable to create your partner account. Please try again."
       );
     } finally {
       setLoading(false);
     }
   };
 
+  const handleGoogleSignup = () => {
+    console.log("Google partner signup clicked");
+  };
+
+  const handleWheel = (e) => {
+    if (e.deltaY !== 0) {
+      window.scrollBy(0, e.deltaY);
+    }
+
+    if (e.deltaX !== 0) {
+      window.scrollBy(e.deltaX, 0);
+    }
+  };
+
+  const inputClass =
+    "w-full rounded-2xl border border-black/10 bg-[#f1ece5] px-4 py-3.5 text-sm font-semibold text-black outline-none placeholder:text-black/35 transition-all duration-300 hover:border-black/20 focus:border-black focus:bg-white focus:shadow-[0_0_0_4px_rgba(0,0,0,0.05)]";
+
+  const labelClass =
+    "mb-2 block text-sm font-bold text-black";
+
   return (
-    <main className="min-h-[100dvh] overflow-x-hidden overflow-y-auto bg-[#e87524] p-3 md:p-5">
-
-      {/* ===================================================== */}
-      {/* MAIN CONTAINER */}
-      {/* ===================================================== */}
-
+    <AuthLayout
+      image="/Images/foodall.jpg"
+      imageAlt="A spread of freshly prepared food"
+      imageLabel="Made with passion"
+      heroTitle="Bring your"
+      heroAccent="kitchen to CRAVE."
+      audienceLabel="For food partners"
+    >
+      {/* Entire card/content area controls PAGE scrolling */}
       <div
-        className="
-          relative
-          flex
-          min-h-[calc(100dvh-24px)]
-          overflow-hidden
-          rounded-[30px]
-          border
-          border-white/10
-          bg-[#f4f0e8]
-          shadow-[0_24px_80px_rgba(66,34,10,0.3)]
-          md:min-h-[calc(100dvh-40px)]
-        "
+        className="w-full"
+        onWheel={handleWheel}
       >
+        <div className="mb-6">
+          <h1 className="text-4xl font-black text-black md:text-[42px]">
+            Join CRAVE.
+          </h1>
 
-        {/* ================================================= */}
-        {/* LEFT — PARTNER BRAND */}
-        {/* ================================================= */}
+          <p className="mt-2 text-sm font-medium leading-5 text-black/55">
+            Create your partner account and start sharing your food with CRAVE.
+          </p>
+        </div>
 
-        <section
-          className="
-            relative
-            hidden
-            w-[42%]
-            overflow-hidden
-            bg-[#b9541d]
-            text-white
-            lg:block
-          "
-        >
-
-          {/* Orange glow */}
-
+        {error && (
           <div
-            className="
-              absolute
-              -left-40
-              -top-40
-              h-[550px]
-              w-[550px]
-              rounded-full
-              bg-orange-500/10
-              blur-3xl
-            "
-          />
-
-          {/* Large background typography */}
-
-          <div
-            className="
-              absolute
-              -bottom-8
-              -left-5
-              select-none
-              text-[9vw]
-              font-black
-              leading-[0.75]
-              tracking-[-0.08em]
-              text-white/[0.14]
-            "
+            role="alert"
+            className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs font-semibold leading-5 text-red-700"
           >
-            COOK
-            <br />
-            CREATE
+            {error}
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={handleGoogleSignup}
+          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white px-5 py-3.5 text-sm font-black text-black shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md active:translate-y-0"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              fill="#4285F4"
+              d="M21.35 12.23c0-.78-.07-1.54-.22-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.7 2.92-4.2 2.92-7.39Z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.43c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.51A9.74 9.74 0 0 0 12 21.75Z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M6.54 13.86A5.85 5.85 0 0 1 6.23 12c0-.65.11-1.28.31-1.86V7.63H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.37l3.24-2.51Z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 6.11c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.83 3.17 14.63 2.25 12 2.25a9.74 9.74 0 0 0-8.7 5.38l3.24 2.51C7.31 7.83 9.46 6.11 12 6.11Z"
+            />
+          </svg>
+
+          Continue with Google
+        </button>
+
+        <div className="my-5 flex items-center gap-4">
+          <div className="h-px flex-1 bg-black/10" />
+
+          <span className="text-[10px] font-black uppercase tracking-[0.18em] text-black/35">
+            Or
+          </span>
+
+          <div className="h-px flex-1 bg-black/10" />
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className={labelClass}>
+              Kitchen or business name
+            </label>
+
+            <input
+              id="name"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="e.g. Sourdough Workshop"
+              autoComplete="organization"
+              required
+              className={inputClass}
+            />
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="contactName" className={labelClass}>
+                Contact person
+              </label>
 
-          {/* LOGO */}
+              <input
+                id="contactName"
+                type="text"
+                name="contactName"
+                value={formData.contactName}
+                onChange={handleChange}
+                placeholder="Your name"
+                autoComplete="name"
+                required
+                className={inputClass}
+              />
+            </div>
 
+            <div>
+              <label htmlFor="phone" className={labelClass}>
+                Phone
+              </label>
+
+              <input
+                id="phone"
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="+91 98765 43210"
+                autoComplete="tel"
+                required
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="address" className={labelClass}>
+              Kitchen address
+            </label>
+
+            <input
+              id="address"
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Street, area, city"
+              autoComplete="street-address"
+              required
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className={labelClass}>
+              Business email
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="hello@yourkitchen.com"
+              autoComplete="email"
+              required
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className={labelClass}>
+              Password
+            </label>
+
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="At least 8 characters"
+              autoComplete="new-password"
+              minLength={8}
+              required
+              className={inputClass}
+            />
+          </div>
+
+          <p className="pt-0.5 text-[10px] font-medium leading-4 text-black/45">
+            By creating an account, you agree to our{" "}
+            <span className="font-bold text-black">
+              Terms of Service
+            </span>{" "}
+            and partner policy.
+          </p>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex w-full items-center justify-center rounded-2xl bg-black px-5 py-3.5 text-sm font-black tracking-wide text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-orange-600 hover:shadow-xl active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT →"}
+          </button>
+        </form>
+
+        <p className="mt-5 pb-6 text-center text-sm font-medium text-black/55">
+          Already have a partner account?{" "}
           <Link
-            to="/"
-            className="
-              absolute
-              left-9
-              top-8
-              z-20
-              text-3xl
-              font-black
-              tracking-[-0.07em]
-              text-white
-            "
+            to="/food-partner/login"
+            className="font-black text-black underline underline-offset-4 transition hover:text-orange-600"
           >
-            CRAVE.
+            Sign in
           </Link>
-
-
-          {/* Partner badge */}
-
-          <div
-            className="
-              absolute
-              right-8
-              top-8
-              z-20
-              rounded-full
-              border
-              border-white/15
-              bg-white/5
-              px-4
-              py-2
-              text-[10px]
-              font-black
-              uppercase
-              tracking-[0.2em]
-              text-white/70
-              backdrop-blur-md
-            "
-          >
-            For Partners
-          </div>
-
-
-          {/* ================================================= */}
-          {/* IMAGE */}
-          {/* ================================================= */}
-
-          <div
-            className="
-              group
-              absolute
-              left-9
-              right-9
-              top-[18%]
-              bottom-[24%]
-              overflow-hidden
-              rounded-[28px]
-              border
-              border-white/15
-              bg-[#242424]
-            "
-          >
-
-            <img
-              src="/Images/Culinary Chef.jpg"
-              alt="CRAVE food partner"
-              className="
-                absolute
-                inset-0
-                h-full
-                w-full
-                object-cover
-                opacity-80
-                grayscale-[15%]
-                transition-transform
-                duration-700
-                ease-[cubic-bezier(0.22,1,0.36,1)]
-                group-hover:scale-110
-              "
-            />
-
-            {/* Image overlay */}
-
-            <div
-              className="
-                absolute
-                inset-0
-                bg-gradient-to-t
-                from-black
-                via-black/10
-                to-transparent
-              "
-            />
-
-            {/* Image content */}
-
-            <div className="absolute bottom-6 left-6 right-6 z-10">
-
-              <div className="mb-3 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-orange-500" />
-
-              </div>
-
-              <h2 className="text-3xl font-black leading-none tracking-[-0.04em] text-white">
-                Your kitchen.
-                <br />
-                Your craft.
-              </h2>
-
-            </div>
-          </div>
-
-
-          {/* Bottom statement */}
-
-          <div className="absolute bottom-8 left-9">
-
-
-          </div>
-
-        </section>
-
-
-        {/* ================================================= */}
-        {/* RIGHT — APPLICATION */}
-        {/* ================================================= */}
-
-        <section
-          className="
-            auth-form-scroll
-            relative
-            flex
-            flex-1
-            min-h-0
-            items-center
-            justify-center
-            bg-[#f4f0e8]
-            px-6
-            py-8
-            md:px-12
-            lg:px-16
-          "
-        >
-
-          {/* Decorative circle */}
-
-          <div
-            className="
-              absolute
-              -right-40
-              -top-40
-              h-[500px]
-              w-[500px]
-              rounded-full
-              border-[70px]
-              border-orange-500/10
-            "
-          />
-
-
-          <div className="relative z-10 w-full max-w-[520px]">
-
-            <BackToLanding />
-
-            {/* ================================================= */}
-            {/* MOBILE LOGO */}
-            {/* ================================================= */}
-
-            <div className="mb-7 flex items-center justify-between lg:hidden">
-
-              <Link
-                to="/"
-                className="
-                  text-3xl
-                  font-black
-                  tracking-[-0.07em]
-                  text-black
-                "
-              >
-                CRAVE.
-              </Link>
-
-
-            </div>
-
-
-            {/* ================================================= */}
-            {/* HEADER */}
-            {/* ================================================= */}
-
-            <div className="mb-6">
-
-              <div className="mb-4 flex items-center justify-between">
-
-                <span className="font-mono text-[10px] font-bold text-black/30">
-                  STEP 01 / 02
-                </span>
-
-              </div>
-
-
-              <h1
-                className="
-                  text-4xl
-                  font-black
-                  tracking-[-0.06em]
-                  text-black
-                  md:text-5xl
-                "
-              >
-                Open your
-                <br />
-                kitchen.
-              </h1>
-
-
-            </div>
-
-
-            {/* ================================================= */}
-            {/* ERROR */}
-            {/* ================================================= */}
-
-            {error && (
-              <div
-                className="
-                  mb-4
-                  rounded-xl
-                  border
-                  border-red-200
-                  bg-red-50
-                  px-4
-                  py-3
-                  text-xs
-                  font-semibold
-                  leading-5
-                  text-red-700
-                "
-              >
-                {error}
-              </div>
-            )}
-
-
-            {/* ================================================= */}
-            {/* FORM */}
-            {/* ================================================= */}
-
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4"
-            >
-
-              {/* Business name */}
-
-              <div>
-
-                <label
-                  htmlFor="name"
-                  className="mb-2 block text-[11px] font-black uppercase tracking-wide text-black/60"
-                >
-                  Kitchen / Business name
-                </label>
-
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="e.g. Sourdough Workshop"
-                  required
-                  className="
-                    w-full
-                    rounded-xl
-                    border
-                    border-black/10
-                    bg-white
-                    px-4
-                    py-3.5
-                    text-sm
-                    font-semibold
-                    text-black
-                    outline-none
-                    placeholder:text-black/30
-                    transition
-                    focus:border-orange-500
-                    focus:ring-4
-                    focus:ring-orange-500/10
-                  "
-                />
-
-              </div>
-
-
-              {/* Contact + Phone */}
-
-              <div className="grid grid-cols-2 gap-3">
-
-                <div>
-
-                  <label
-                    htmlFor="contactName"
-                    className="mb-2 block text-[11px] font-black uppercase tracking-wide text-black/60"
-                  >
-                    Contact person
-                  </label>
-
-                  <input
-                    id="contactName"
-                    type="text"
-                    name="contactName"
-                    value={formData.contactName}
-                    onChange={handleChange}
-                    placeholder="Your name"
-                    required
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-black/10
-                      bg-white
-                      px-4
-                      py-3.5
-                      text-sm
-                      font-semibold
-                      text-black
-                      outline-none
-                      placeholder:text-black/30
-                      transition
-                      focus:border-orange-500
-                      focus:ring-4
-                      focus:ring-orange-500/10
-                    "
-                  />
-
-                </div>
-
-
-                <div>
-
-                  <label
-                    htmlFor="phone"
-                    className="mb-2 block text-[11px] font-black uppercase tracking-wide text-black/60"
-                  >
-                    Phone
-                  </label>
-
-                  <input
-                    id="phone"
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+91 98765 43210"
-                    required
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-black/10
-                      bg-white
-                      px-4
-                      py-3.5
-                      text-sm
-                      font-semibold
-                      text-black
-                      outline-none
-                      placeholder:text-black/30
-                      transition
-                      focus:border-orange-500
-                      focus:ring-4
-                      focus:ring-orange-500/10
-                    "
-                  />
-
-                </div>
-
-              </div>
-
-
-              {/* Address */}
-
-              <div>
-
-                <label
-                  htmlFor="address"
-                  className="mb-2 block text-[11px] font-black uppercase tracking-wide text-black/60"
-                >
-                  Kitchen address
-                </label>
-
-                <input
-                  id="address"
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Street, area, city"
-                  required
-                  className="
-                    w-full
-                    rounded-xl
-                    border
-                    border-black/10
-                    bg-white
-                    px-4
-                    py-3.5
-                    text-sm
-                    font-semibold
-                    text-black
-                    outline-none
-                    placeholder:text-black/30
-                    transition
-                    focus:border-orange-500
-                    focus:ring-4
-                    focus:ring-orange-500/10
-                  "
-                />
-
-              </div>
-
-
-              {/* Email */}
-
-              <div>
-
-                <label
-                  htmlFor="email"
-                  className="mb-2 block text-[11px] font-black uppercase tracking-wide text-black/60"
-                >
-                  Business email
-                </label>
-
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="hello@yourkitchen.com"
-                  required
-                  className="
-                    w-full
-                    rounded-xl
-                    border
-                    border-black/10
-                    bg-white
-                    px-4
-                    py-3.5
-                    text-sm
-                    font-semibold
-                    text-black
-                    outline-none
-                    placeholder:text-black/30
-                    transition
-                    focus:border-orange-500
-                    focus:ring-4
-                    focus:ring-orange-500/10
-                  "
-                />
-
-              </div>
-
-
-              {/* Password */}
-
-              <div>
-
-                <label
-                  htmlFor="password"
-                  className="mb-2 block text-[11px] font-black uppercase tracking-wide text-black/60"
-                >
-                  Create password
-                </label>
-
-                <input
-                  id="password"
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="At least 8 characters"
-                  minLength={8}
-                  required
-                  className="
-                    w-full
-                    rounded-xl
-                    border
-                    border-black/10
-                    bg-white
-                    px-4
-                    py-3.5
-                    text-sm
-                    font-semibold
-                    text-black
-                    outline-none
-                    placeholder:text-black/30
-                    transition
-                    focus:border-orange-500
-                    focus:ring-4
-                    focus:ring-orange-500/10
-                  "
-                />
-
-              </div>
-
-
-              {/* ================================================= */}
-              {/* VERIFICATION NOTICE */}
-              {/* ================================================= */}
-
-              <div
-                className="
-                  flex
-                  gap-3
-                  rounded-xl
-                  border
-                  border-black/10
-                  bg-black/[0.035]
-                  px-4
-                  py-3
-                "
-              >
-
-                <div
-                  className="
-                    mt-0.5
-                    flex
-                    h-6
-                    w-6
-                    shrink-0
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-black
-                    text-[10px]
-                    font-black
-                    text-white
-                  "
-                >
-                  ✓
-                </div>
-
-                <div>
-
-                  <p className="text-xs font-black text-black">
-                    Verification required
-                  </p>
-
-                  <p className="mt-0.5 text-[10px] leading-4 text-black/50">
-                    We verify business details and food safety
-                    information before your menu goes live.
-                  </p>
-
-                </div>
-
-              </div>
-
-
-              {/* ================================================= */}
-              {/* SUBMIT */}
-              {/* ================================================= */}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="
-                  flex
-                  w-full
-                  items-center
-                  justify-center
-                  rounded-xl
-                  bg-black
-                  px-5
-                  py-3.5
-                  text-sm
-                  font-black
-                  tracking-wide
-                  text-white
-                  shadow-lg
-                  transition-all
-                  duration-300
-                  hover:-translate-y-0.5
-                  hover:bg-orange-600
-                  hover:shadow-xl
-                  active:translate-y-0
-                  disabled:cursor-not-allowed
-                  disabled:opacity-50
-                "
-              >
-                {loading
-                  ? "SUBMITTING APPLICATION..."
-                  : "SUBMIT APPLICATION →"}
-              </button>
-
-            </form>
-
-
-            {/* ================================================= */}
-            {/* FOOTER */}
-            {/* ================================================= */}
-
-            <div className="mt-5 border-t border-black/10 pt-4 text-center">
-
-              <p className="text-xs font-medium text-black/45">
-
-                Already a partner?{" "}
-
-                <Link
-                  to="/food-partner/login"
-                  className="
-                    font-black
-                    text-black
-                    underline
-                    underline-offset-4
-                    transition
-                    hover:text-orange-600
-                  "
-                >
-                  Open merchant desk
-                </Link>
-
-              </p>
-
-            </div>
-
-          </div>
-        </section>
-
+        </p>
       </div>
-    </main>
+    </AuthLayout>
   );
 }

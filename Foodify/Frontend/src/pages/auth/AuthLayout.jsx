@@ -1,70 +1,49 @@
+import { Link } from "react-router-dom";
+import BackToLanding from "./BackToLanding";
+
 export default function AuthLayout({
   children,
-  headline = "Real food, from kitchens near you.",
-  description = "Connect directly with neighbourhood cooks, artisan bakers, and independent dining houses.",
-  partnerMode = false,
+  image,
+  imageAlt,
+  imageLabel,
+  heroTitle,
+  heroAccent,
+  audienceLabel,
 }) {
   return (
-    <main className="relative min-h-screen overflow-auto bg-[#f4ad32] p-3 font-sans sm:p-5 lg:p-8">
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-0 opacity-40">
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-orange-300/20 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-black/10 blur-3xl" />
-      </div>
+    <main className="min-h-[100dvh] overflow-x-hidden overflow-y-auto bg-[#f4ad32] p-3 md:p-5">
+      <div className="flex min-h-[calc(100dvh-24px)] overflow-hidden rounded-[36px] border border-black/10 bg-[#fffaf3] shadow-[0_24px_80px_rgba(66,34,10,0.24)] md:min-h-[calc(100dvh-40px)]">
+        <section className="relative hidden w-[48%] overflow-hidden bg-[#f6ad3d] lg:block">
+          <div className="absolute -left-32 top-20 h-[420px] w-[420px] rounded-full border-[60px] border-black/[0.06]" />
+          <div className="absolute -bottom-48 -right-32 h-[550px] w-[550px] rounded-full border-[70px] border-black/[0.06]" />
 
-      {/* Main Container */}
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-24px)] w-full max-w-6xl overflow-hidden rounded-[30px] border border-black/10 bg-[#fffaf3] shadow-[0_25px_80px_rgba(0,0,0,0.15)] sm:min-h-[calc(100vh-40px)] lg:grid-cols-12">
-        
-        {/* ================= LEFT PANEL ================= */}
-        <section
-          className={`relative flex flex-col justify-between p-7 text-white sm:p-10 lg:col-span-5 ${
-            partnerMode ? "bg-[#191919]" : "bg-[#f6ad3d]"
-          }`}
-        >
-          {/* Brand */}
-          <div>
-            {/* Headline */}
-            <div className="mt-16 space-y-4">
-              <h2
-                className={`max-w-md text-3xl font-black leading-[1.05] tracking-[-0.04em] sm:text-4xl ${
-                  partnerMode ? "text-white" : "text-black"
-                }`}
-              >
-                {headline}
-              </h2>
+          <Link to="/" className="absolute left-10 top-8 z-30 text-3xl font-black text-black transition-transform duration-300 hover:scale-105">
+            CRAVE.
+          </Link>
 
-              <p
-                className={`max-w-md text-sm leading-6 ${
-                  partnerMode ? "text-white/55" : "text-black/55"
-                }`}
-              >
-                {description}
-              </p>
+          <div className="group absolute bottom-[20%] left-10 right-10 top-[12%] overflow-hidden rounded-[40px] border-[8px] border-white/90 bg-black/10 shadow-[0_30px_60px_rgba(0,0,0,0.25)]">
+            <img src={image} alt={imageAlt} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10" />
+            <div className="absolute bottom-6 left-6 z-10 rounded-full border border-white/50 bg-white/90 px-5 py-3 shadow-xl backdrop-blur-md">
+              <p className="text-sm font-black text-black">{imageLabel}</p>
             </div>
+            <span className="absolute right-6 top-6 z-10 rounded-full border border-white/40 bg-black/45 px-4 py-2 text-[9px] font-black uppercase tracking-[0.16em] text-white backdrop-blur-sm">
+              {audienceLabel}
+            </span>
           </div>
 
-          {/* Quote */}
-          <div
-            className={`mt-12 border-t pt-6 ${
-              partnerMode
-                ? "border-white/10"
-                : "border-black/10"
-            }`}
-          >
-            <p
-              className={`text-xs italic leading-5 ${
-                partnerMode ? "text-white/50" : "text-black/50"
-              }`}
-            >
-              “Crafted with respect for real ingredients and human scale.”
-            </p>
-
+          <div className="absolute bottom-8 left-10 z-20">
+            <h2 className="text-4xl font-black leading-[0.9] text-black xl:text-5xl">
+              {heroTitle}<br />{heroAccent}
+            </h2>
           </div>
         </section>
 
-        {/* ================= RIGHT PANEL ================= */}
-        <section className="flex items-center justify-center bg-[#fffaf3] p-6 sm:p-10 md:p-12 lg:col-span-7">
-          <div className="w-full max-w-md">
+        <section className="auth-form-scroll relative flex min-h-0 flex-1 items-center justify-center bg-[#fffaf3] px-6 py-8 md:px-10 lg:px-14">
+          <div className="absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full border-[80px] border-[#f6ad3d]/10" />
+          <div className="relative z-10 w-full max-w-[440px]">
+            <BackToLanding />
+            <Link to="/" className="mb-8 block text-3xl font-black text-black lg:hidden">CRAVE.</Link>
             {children}
           </div>
         </section>
