@@ -14,6 +14,7 @@ import Landingpage from '../pages/Landing/Landingpage';
 import { CustomerCart } from '../pages/general/CustomerCart';
 import { CustomerCartProvider } from '../pages/general/CustomerCartContext';
 import { useCustomerCart } from '../pages/general/CustomerCartStore';
+import Checkout from '../pages/general/Checkout';
 
 function PartnerOnlyRoute() {
   const [status, setStatus] = useState('checking');
@@ -80,6 +81,7 @@ function AppContent() {
           <Route path="/home" element={<Home />} />
           <Route path="/reels" element={<Reels />} />
           <Route path="/saved" element={<Saved />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/create-food" element={<PartnerOnlyRoute />} />
           <Route path="/food-partner/:partnerId" element={<Profile />} />
         </Routes>
