@@ -1,6 +1,6 @@
 const ImageKit = require("imageKit");
 require('dotenv').config()
-
+const {v4:uuid} = require("uuid")
 const imageKit = new ImageKit({
     publicKey:process.env.IMAGEKIT_PUBLIC_KEY,
     privateKey:process.env.IMAGEKIT_PRIVATE_KEY,
@@ -14,7 +14,7 @@ async function uploadFiles(files) {
 
         const uploadPromise = files.map(image=>{
             return imageKit.upload({
-                file:file.buffer,
+                file:image.buffer,
                 fileName:`${uuid()}-image`,
             })
         })
@@ -25,7 +25,7 @@ async function uploadFiles(files) {
     }
     catch(error){
         console.log(error);
-        
+        return null
     }
 }
 
