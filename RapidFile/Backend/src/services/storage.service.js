@@ -1,4 +1,4 @@
-const ImageKit = require("imageKit");
+const ImageKit = require("imagekit");
 require('dotenv').config()
 const {v4:uuid} = require("uuid")
 const imageKit = new ImageKit({
@@ -15,7 +15,7 @@ async function uploadFiles(files) {
         const uploadPromise = files.map(image=>{
             return imageKit.upload({
                 file:image.buffer,
-                fileName:`${uuid()}-image`,
+                fileName:`${uuid()}-${image.originalname}`,
             })
         })
 
@@ -24,11 +24,11 @@ async function uploadFiles(files) {
         return imgUrls;
     }
     catch(error){
-        console.log(error);
+        console.log("Imagekit Upload Error",error);
         return null
     }
 }
 
 module.exports = {
-    uploadFile
+    uploadFiles
 }

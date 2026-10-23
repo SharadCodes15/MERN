@@ -1,0 +1,114 @@
+RapidFile Backend Review
+========================
+
+Scope
+-----
+Reviewed backend JavaScript, package manifest, lockfile, and README in
+RapidFile/Backend. The frontend was not included in this backend review.
+
+Summary
+-------
+The backend does not currently start under the installed Node.js v24.12.0
+runtime. The startup file mixes CommonJS require() with top-level await.
+After that is corrected, the missing dotenv dependency and an image-upload
+service method-name mismatch remain. Data retrieval also does not follow the
+key-based and expiry behavior described in the README.
+
+Findings
+--------
+
+1. CRITICAL - Startup fails due to mixed module syntax
+   File: server.js
+   Lines: 1-4
+   Evidence: The file uses require() and also uses top-level await. The
+   package does not declare "type": "module". Running `node server.js` with
+   Node.js v24.12.0 fails with ERR_AMBIGUOUS_MODULE_SYNTAX before starting
+   the application.
+   Impact: The backend cannot start.
+   Recommendation: Keep the project CommonJS and put startup logic in an
+   async function (or use promise chaining), or consistently migrate the
+   project to ES modules and declare that module type.
+
+2. HIGH - dotenv is required but is not a declared/installed dependency
+   File: src/services/storage.service.js
+   Lines: 2
+   Related: package.json lines 1-9
+   Evidence: The storage service calls require('dotenv'). The package
+   manifest and lockfile do not list dotenv; `npm ls --depth=0` reports only
+   the six declared dependencies, and requiring dotenv in the backend fails
+   with MODULE_NOT_FOUND.
+   Impact: Once the startup module-format error is fixed, loading the app
+   will fail while loading the storage service.
+   Recommendation: Add dotenv as a direct dependency, or remove this require
+   if environment loading is intentionally handled elsewhere.
+
+3. HIGH - Controller calls an upload method the service does not export
+   File: src/controllers/Data.controller.js
+   Line: 8
+   Related: src/services/storage.service.js lines 11, 32-34
+   Evidence: The controller calls storageService.uploadFile(), while the
+   storage service defines and exports uploadFiles().
+   Impact: Any create request containing files fails with a TypeError instead
+   of uploading images. The controller then returns HTTP 500.
+   Recommendation: Use one method name consistently in the service and
+   controller.
+
+4. HIGH - Retrieval returns every stored record without a key lookup
+   File: src/controllers/Data.controller.js
+   Lines: 44-49
+   Related: src/Routes/Data.route.js line 11
+   Evidence: GET /api/data/get runs DataModel.find({}) and has no key/siteURL
+   filter. The README describes fetching a record using its key.
+   Impact: A caller can receive all stored text and image URLs rather than
+   only the record they requested.
+   Recommendation: Require the intended key in the request and query only
+   the matching record; return an appropriate not-found response.
+
+5. HIGH - Expiry timestamps are not enforced
+   File: src/controllers/Data.controller.js
+   Lines: 44-49
+   Related: src/models/Data.model.js lines 3-9
+   Evidence: Creation assigns TimeofExpiry, but retrieval neither filters
+   expired records nor rejects an expired record.
+   Impact: Records remain retrievable after their stated two-day lifetime.
+   Recommendation: Include an expiry condition in the lookup and consider
+   cleanup/TTL behavior if expired records should be deleted.
+
+6. MEDIUM - Database connection failures are swallowed
+   File: src/DB/db.js
+   Lines: 3-11
+   Related: server.js lines 3-5
+   Evidence: connectDB catches connection failures and only logs them. It
+   resolves normally, so the awaited call in server.js can continue to
+   app.listen() even though MongoDB is unavailable.
+   Impact: The server may report that it is running while database-backed
+   requests fail.
+   Recommendation: Re-throw the connection error or let it reject, and only
+   start listening after a successful database connection.
+
+7. MEDIUM - Memory-backed uploads have no file-size limit
+   File: src/Routes/Data.route.js
+   Lines: 5-7, 10
+   Evidence: Multer uses memoryStorage() and limits the count to 50, but no
+   fileSize limit is configured.
+   Impact: Large uploads can consume excessive process memory.
+   Recommendation: Configure an appropriate fileSize limit (and validate
+   accepted file types) in the Multer options.
+
+8. LOW - CORS credentials option is misspelled
+   File: src/app.js
+   Line: 10
+   Evidence: The option is written as Credentials; the cors middleware
+   expects credentials.
+   Impact: Credentialed cross-origin requests will not be enabled as
+   intended.
+   Recommendation: Use the correctly-cased credentials option if cookies
+   or authorization credentials are needed cross-origin.
+
+Validation
+----------
+- `node --check` completed without reporting syntax errors for the backend
+  JavaScript files.
+- Starting the backend with Node.js v24.12.0 failed with
+  ERR_AMBIGUOUS_MODULE_SYNTAX in server.js, as documented in finding 1.
+- Dependency inspection confirmed dotenv is missing.

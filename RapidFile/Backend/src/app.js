@@ -1,15 +1,15 @@
 const express = require('express')
 const multer = require("multer")
+const DataRoutes = require("./Routes/Data.route")
+const cors = require("cors")
 
 const app = express()
-app.use(multer);
-const port = 3000
+app.use(express.json());
+app.use(cors({
+    origin:"http://localhost:5371",
+    credentials:true
+}))
 
-
-
-app.get("/",(req,res)=>{
-    res.send("Hello world")
-})
-
+app.use('/api/data',DataRoutes)
 
 module.exports = app;
