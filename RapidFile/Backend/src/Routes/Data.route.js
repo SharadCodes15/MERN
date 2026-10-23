@@ -8,6 +8,6 @@ const upload = multer({
 
 // create Data
 router.post('/create',upload.array('imageUrls',50),DataController.createData)
-router.get("/get",DataController.getData)
-
+router.get("/get/all",DataController.getDataAll)
+router.get('/:url',DataController.getDataBysiteURL)
 module.exports = router

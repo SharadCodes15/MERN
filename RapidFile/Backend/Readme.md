@@ -27,5 +27,16 @@ for storage save if user login in second time backend revoked = > expiry time ch
 
 
 tasks :
-1 > crate data model
-2 > upload system
+1 > crate data model   ~/
+2 > upload system      ~/
+3 > siteURL system      ~/
+4 > expiry system       
+
+key is having logical problems hence only siteURL stick to it 
+post requet on /get will genereate a siteURL and shown to user and using it he can access docs
+
+data model -> id : user defined 
+            site URL : uuid
+
+        get-> frontend vr -> id-> redirect findbymyid(model)-> siteurl-> getbysiteurl -> files
+

@@ -6,9 +6,9 @@ async function checkFiles(req) {
     return [];
   }
   const fileupload = await storageService.uploadFiles(req.files);
-  
-  if (!fileupload){
-    throw new Error("Image upload Failed")
+
+  if (!fileupload) {
+    throw new Error("Image upload Failed");
   }
 
   return fileupload;
@@ -24,7 +24,7 @@ async function createData(req, res) {
     const DataItem = await DataModel.create({
       siteURL: uuid(),
       text: req.body.text,
-      imageURLs: files, 
+      imageURLs: files,
       TimeofCreation: createDate,
       TimeofExpiry: expiryDate,
     });
@@ -41,7 +41,7 @@ async function createData(req, res) {
   }
 }
 
-async function getData(req, res) {
+async function getDataAll(req, res) {
   try {
     const dataItem = await DataModel.find({});
     res.status(200).json({
@@ -55,4 +55,25 @@ async function getData(req, res) {
   }
 }
 
-module.exports = { createData, getData };
+async function getDataBysiteURL(req, res) {
+  try {
+    const result = await DataModel.findOne({ siteURL: req.params.url });
+    if (result === null) {
+        return  res.status(404).json({
+        message: "Data Not found with this url",
+      });
+
+    }
+    res.status(200).json({
+      message: "Successfully Fetched",
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error occured while fetching data",
+      error: error,
+    });
+  }
+}
+
+module.exports = { createData, getDataAll,getDataBysiteURL };
