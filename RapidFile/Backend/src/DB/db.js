@@ -7,7 +7,7 @@ async function connectDB() {
     })
     .catch((err)=>{
         console.log("error",err);
-        
+        throw new Error("Error occured while Connecting DB")
     })
 }
 

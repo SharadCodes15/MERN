@@ -1,5 +1,4 @@
 const express = require('express')
-const multer = require("multer")
 const DataRoutes = require("./Routes/Data.route")
 const cors = require("cors")
 

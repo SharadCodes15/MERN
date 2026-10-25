@@ -3,7 +3,10 @@ const foodModel = require('../models/food.model');
 async function getFoodPartnerByID(req,res) {
     const foodPartnerId = req.params.id;
     const foodPartner = await  foodpartnerModel.findById(foodPartnerId)
-    const foodItemsByFoodPartner = await foodModel.find({foodPartner:foodPartnerId})
+    const foodItemsByFoodPartner = await foodModel.find({
+        foodpartner: foodPartnerId,
+        isAvailable: { $ne: false },
+    })
     if(!foodPartner){
         return res.status(404).json({message:"Food Partner not found"})
     }

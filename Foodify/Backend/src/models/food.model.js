@@ -22,6 +22,10 @@ const foodSchema = new mongoose.Schema({
     saveCount:{
         type:Number,
         default:0
+    },
+    isAvailable:{
+        type:Boolean,
+        default:true
     }
 })
 

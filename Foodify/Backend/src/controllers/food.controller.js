@@ -30,9 +30,61 @@ async function createFood(req, res) {
   })
 }
 
+async function getPartnerFoods(req, res) {
+  const foodItems = await foodModel
+    .find({ foodpartner: req.foodpartner._id })
+    .sort({ _id: -1 });
+
+  res.status(200).json({
+    message: "Partner food items fetched successfully",
+    foodItems,
+  });
+}
+
+async function updatePartnerFood(req, res) {
+  const updates = {};
+
+  if (typeof req.body.name === "string") {
+    const name = req.body.name.trim();
+    if (!name) {
+      return res.status(400).json({ message: "Dish name cannot be empty" });
+    }
+    updates.name = name;
+  }
+
+  if (typeof req.body.description === "string") {
+    updates.description = req.body.description.trim();
+  }
+
+  if (typeof req.body.isAvailable === "boolean") {
+    updates.isAvailable = req.body.isAvailable;
+  } else if (req.body.isAvailable === "true" || req.body.isAvailable === "false") {
+    updates.isAvailable = req.body.isAvailable === "true";
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return res.status(400).json({ message: "No supported dish changes provided" });
+  }
+
+  const foodItem = await foodModel.findOneAndUpdate(
+    { _id: req.params.id, foodpartner: req.foodpartner._id },
+    { $set: updates },
+    { new: true, runValidators: true },
+  );
+
+  if (!foodItem) {
+    return res.status(404).json({ message: "Dish not found in your kitchen" });
+  }
+
+  return res.status(200).json({
+    message: "Dish updated successfully",
+    food: foodItem,
+  });
+}
+
 async function GetFoodsItems(req,res) {
     const [foodItems, userLikes, userSaves] = await Promise.all([
-      foodModel.find({}),
+      foodModel.find({ isAvailable: { $ne: false } }),
       likesModel.find({ user: req.user._id }).select("food"),
       saveModel.find({ user: req.user._id }).select("food"),
     ]);
@@ -125,7 +177,10 @@ async function GetSavedFoods(req, res) {
     .sort({ createdAt: -1 })
     .select("food");
   const savedFoodIds = savedRecords.map((record) => record.food);
-  const foodItems = await foodModel.find({ _id: { $in: savedFoodIds } });
+  const foodItems = await foodModel.find({
+    _id: { $in: savedFoodIds },
+    isAvailable: { $ne: false },
+  });
   const foodById = new Map(foodItems.map((foodItem) => [foodItem._id.toString(), foodItem]));
 
   res.status(200).json({
@@ -143,6 +198,8 @@ async function GetSavedFoods(req, res) {
 
 module.exports = {
   createFood,
+  getPartnerFoods,
+  updatePartnerFood,
   GetFoodsItems,
   likeFood,
   SaveFood,

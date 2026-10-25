@@ -9,26 +9,46 @@ const imageKit = new ImageKit({
 
 
 async function uploadFiles(files) {
+  const results = await Promise.allSettled(
+    files.map(async (image) => {
+      const result = await imageKit.upload({
+        file: image.buffer,
+        fileName: uuid(),
+      });
 
-    try{
+      if (!result?.fileId) {
+        throw new Error("ImageKit upload returned no file ID");
+      }
 
-        const uploadPromise = files.map(image=>{
-            return imageKit.upload({
-                file:image.buffer,
-                fileName:`${uuid()}-${image.originalname}`,
-            })
-        })
+      return result;
+    })
+  );
 
-        const uploadResult = await Promise.all(uploadPromise) 
-        const imgUrls = uploadResult.map(result=>result.url)
-        return imgUrls;
-    }
-    catch(error){
-        console.log("Imagekit Upload Error",error);
-        return null
-    }
+  const uploaded = results
+    .filter((result) => result.status === "fulfilled")
+    .map((result) => result.value);
+
+  const uploadErrors = results
+    .filter((result) => result.status === "rejected")
+    .map((result) => result.reason);
+
+  if (uploadErrors.length > 0) {
+    const cleanupResults = await Promise.allSettled(
+      uploaded.map((file) => imageKit.deleteFile(file.fileId))
+    );
+
+    const cleanupErrors = cleanupResults
+      .filter((result) => result.status === "rejected")
+      .map((result) => result.reason);
+
+    throw new AggregateError(
+      [...uploadErrors, ...cleanupErrors],
+      "ImageKit upload failed"
+    );
+  }
+
+  return uploaded;
 }
-
 module.exports = {
     uploadFiles
 }

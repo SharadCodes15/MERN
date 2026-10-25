@@ -10,6 +10,8 @@ const upload = multer({
 
 // POST /api/food/ [protected]
 router.post('/', authMiddleware.authFoodPartnerMiddleware, upload.single("video"), foodController.createFood);
+router.get('/partner', authMiddleware.authFoodPartnerMiddleware, foodController.getPartnerFoods);
+router.patch('/:id', authMiddleware.authFoodPartnerMiddleware, foodController.updatePartnerFood);
 // GET /api/food/ [protected]
 router.get('/', authMiddleware.authUserMiddleware, foodController.GetFoodsItems)
 
